@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>HappyShop.Service</RootNamespace>
+    <AssemblyName>HappyShop.Service</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HappyShop.Core\HappyShop.Core.csproj" />
+  </ItemGroup>
+
+</Project>

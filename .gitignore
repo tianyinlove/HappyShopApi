@@ -3,3 +3,14 @@
 ################################################################################
 
 /HappyShop.Abstractions/obj
+/.vs/HappyShop/v16/Server/sqlite3
+/HappyShop.Api/obj
+/HappyShop.Data/obj
+/HappyShop.Service/obj
+/HappyShop.Api/bin/Debug/netcoreapp3.1
+/.vs/HappyShop/v16
+/HappyShop.Abstractions/bin/Debug/netstandard2.0
+/HappyShop.Core/bin/Debug/netstandard2.0
+/HappyShop.Core/obj
+/HappyShop.Data/bin/Debug/netstandard2.0
+/HappyShop.Service/bin/Debug/netstandard2.0
