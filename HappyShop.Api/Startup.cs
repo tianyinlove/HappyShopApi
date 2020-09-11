@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HappyShop.Comm;
+using HappyShop.Data;
+using HappyShop.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,10 @@ namespace HappyShop.Api
             //◊¢≤·±æµÿ≈‰÷√
             services.Configure<AppConfig>(Configuration);
             services.AddMemoryCache();
+            services.AddHttpClient();
+            services.AddLogging();
+            services.AddHappyShopService();
+            services.AddHappyShopData();
             services.AddControllers();
         }
 

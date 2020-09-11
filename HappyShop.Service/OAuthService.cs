@@ -1,7 +1,6 @@
 ﻿using HappyShop.Comm;
 using HappyShop.Domian;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -21,21 +20,16 @@ namespace HappyShop.Service
     {
         private AppConfig _config;
         private IMemoryCache _memoryCache;
-        private ILogger<OAuthService> _logger;
-        private IHttpClientFactory _httpClientFactory;
+        private HttpClient _httpClient = new HttpClient(new HttpClientHandler { UseProxy = false, Proxy = null });
 
         /// <summary>
         /// 
         /// </summary>
         public OAuthService(IOptionsMonitor<AppConfig> options,
-            ILogger<OAuthService> logger,
-            IHttpClientFactory httpClientFactory,
             IMemoryCache memoryCache)
         {
             _config = options.CurrentValue;
             _memoryCache = memoryCache;
-            _logger = logger;
-            _httpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -62,9 +56,10 @@ namespace HappyShop.Service
                 return result;
             }
             string apiUrl = string.Format(_config.WechatConfig.MiniSessionUrl, wxConfig.AppID, wxConfig.AppSecret, code);
+
             using (var request = new HttpRequestMessage(HttpMethod.Get, apiUrl))
             {
-                var responseMessage = await _httpClientFactory.CreateClient().SendAsync(request);
+                var responseMessage = await _httpClient.SendAsync(request);
                 responseMessage.EnsureSuccessStatusCode();
                 var json = await responseMessage.Content.ReadAsStringAsync();
                 result = json.FromJson<WeChatLoginInfo>();

@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HappyShop.Comm;
 using HappyShop.Model;
+using HappyShop.Request;
+using HappyShop.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace HappyShop.Api.Controllers
 {
@@ -17,24 +21,16 @@ namespace HappyShop.Api.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly IUserInfoService _userInfoService;
+        public WeatherForecastController(IUserInfoService userInfoService)
         {
-            _logger = logger;
+            _userInfoService = userInfoService;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<UserInfo> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return await _userInfoService.LoginAsync(new LoginRequest { });
         }
     }
 }
