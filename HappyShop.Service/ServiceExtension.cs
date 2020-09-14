@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Utility.Extensions;
 
 namespace HappyShop.Service
 {
@@ -21,7 +22,7 @@ namespace HappyShop.Service
         public static IServiceCollection AddHappyShopService(this IServiceCollection services)
         {
             var _assembly = Assembly.GetExecutingAssembly();
-            return _assembly.Add(services);
+            return services.AddAssembly(_assembly);
         }
 
     }

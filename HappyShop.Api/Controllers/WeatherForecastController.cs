@@ -9,6 +9,7 @@ using HappyShop.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Utility.NetCore;
 
 namespace HappyShop.Api.Controllers
 {
@@ -27,10 +28,15 @@ namespace HappyShop.Api.Controllers
             _userInfoService = userInfoService;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<UserInfo> Get()
+        public async Task<ApiResult<UserInfo>> Get()
         {
-            return await _userInfoService.LoginAsync(new LoginRequest { });
+            var data = await _userInfoService.LoginAsync(new LoginRequest { });
+            return new ApiResult<UserInfo>(data);
         }
     }
 }

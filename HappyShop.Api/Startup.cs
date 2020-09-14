@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Utility.Extensions;
 
 namespace HappyShop.Api
 {
@@ -40,11 +41,14 @@ namespace HappyShop.Api
             services.AddHappyShopService();
             services.AddHappyShopData();
             services.AddControllers();
+            services.AddMvc();
+            services.AddRouting();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseException();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
