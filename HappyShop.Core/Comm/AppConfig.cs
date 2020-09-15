@@ -73,6 +73,10 @@ namespace HappyShop.Comm
         /// 小程序获取用户信息Api地址
         /// </summary>
         public string MiniUserUrl { get; set; }
+        /// <summary>
+        /// 微信获取jsapi_ticket
+        /// </summary>
+        public string WechatTicketUrl { get; set; }
     }
 
     /// <summary>

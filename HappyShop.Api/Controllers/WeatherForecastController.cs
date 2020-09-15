@@ -33,7 +33,7 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ApiResult<UserInfo>> Get()
+        public async Task<object> Get()
         {
             var data = await _userInfoService.LoginAsync(new LoginRequest { });
             return new ApiResult<UserInfo>(data);

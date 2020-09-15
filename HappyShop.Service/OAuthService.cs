@@ -33,6 +33,120 @@ namespace HappyShop.Service
             _memoryCache = memoryCache;
         }
 
+        #region 公众号
+
+        /// <summary>
+        /// 微信获取code回调地址
+        /// </summary>
+        /// <param name="redirectUrl">redirectUrl</param>
+        /// <param name="acountId"></param>
+        /// <param name="isApp">是否是APP端</param>
+        /// <returns></returns>
+        public string GetWeChatCode(string redirectUrl, int acountId, bool isApp = true)
+        {
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            if (wxConfig == null)
+            {
+                throw new Exception("账号不存在");
+            }
+            var url = "";
+            if (isApp)
+            {
+                url = string.Format(_config.WechatConfig.WechatAppConnect, wxConfig.AppID, redirectUrl, "snsapi_userinfo");
+            }
+            else
+            {
+                url = string.Format(_config.WechatConfig.WechatPCConnect, wxConfig.AppID, redirectUrl, "snsapi_login");
+            }
+
+            return url;
+        }
+
+        /// <summary>
+        /// 公众号 根据code获取AccessToken
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="acountId"></param>
+        /// <returns></returns>
+        public async Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, int acountId)
+        {
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            if (wxConfig == null)
+            {
+                throw new Exception("账号不存在");
+            }
+            string cacheKey = $"wechat:{wxConfig.AppID}:{code}";
+            var result = _memoryCache.Get<WeChatAccessTokenInfo>(cacheKey);
+            if (result != null)
+            {
+                return result;
+            }
+            string apiUrl = string.Format(_config.WechatConfig.WechatTokenUrl, wxConfig.AppID, wxConfig.AppSecret, code);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, apiUrl))
+            {
+                var responseMessage = await _httpClient.SendAsync(request);
+                responseMessage.EnsureSuccessStatusCode();
+                var json = await responseMessage.Content.ReadAsStringAsync();
+                result = json.FromJson<WeChatAccessTokenInfo>();
+                if (result != null && !string.IsNullOrEmpty(result.Access_Token))
+                {
+                    _memoryCache.Set(cacheKey, result, TimeSpan.FromSeconds(result.Expires_In - 5));
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 公众号 根据accessToken和openId 获取用户信息
+        /// </summary>
+        /// <param name="accessToken">accessToken</param>
+        /// <param name="openId">openId</param>
+        /// <returns></returns>
+        public async Task<WeChatUserInfo> GetWeChatUserInfoAsync(string accessToken, string openId)
+        {
+            string apiUrl = string.Format(_config.WechatConfig.WechatUserUrl, accessToken, openId);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, apiUrl))
+            {
+                var responseMessage = await _httpClient.SendAsync(request);
+                responseMessage.EnsureSuccessStatusCode();
+                var json = await responseMessage.Content.ReadAsStringAsync();
+                return json.FromJson<WeChatUserInfo>();
+            }
+        }
+
+        /// <summary>
+        /// 公众号 根据accessToken获取jsapi_ticket
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        public async Task<WechatTicketInfo> GetWeChatTicketAsync(string accessToken)
+        {
+            string cacheKey = $"activity:wechat:{accessToken}";
+            var result = _memoryCache.Get<WechatTicketInfo>(cacheKey);
+            if (result != null)
+            {
+                return result;
+            }
+            string apiUrl = string.Format(_config.WechatConfig.WechatTicketUrl, accessToken);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, apiUrl))
+            {
+                var responseMessage = await _httpClient.SendAsync(request);
+                responseMessage.EnsureSuccessStatusCode();
+                var json = await responseMessage.Content.ReadAsStringAsync();
+                result = json.FromJson<WechatTicketInfo>();
+                if (result != null && !string.IsNullOrEmpty(result.Ticket))
+                {
+                    _memoryCache.Set(cacheKey, result, TimeSpan.FromSeconds(result.Expires_In - 5));
+                }
+            }
+            return result;
+        }
+
+        #endregion 公众号
+
+        #region 小程序
+
         /// <summary>
         /// 小程序 临时登录凭证
         /// </summary>
@@ -50,7 +164,7 @@ namespace HappyShop.Service
             {
                 throw new Exception("小程序账号不存在");
             }
-            var cacheKey = $"activity:wechat:{wxConfig.AppID}:{code}";
+            var cacheKey = $"wechat:{wxConfig.AppID}:{code}";
             var result = _memoryCache.Get<WeChatLoginInfo>(cacheKey);
             if (result != null)
             {
@@ -118,5 +232,7 @@ namespace HappyShop.Service
             }
             return default(T);
         }
+
+        #endregion 小程序
     }
 }
