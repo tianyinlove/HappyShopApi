@@ -31,7 +31,8 @@ namespace HappyShop.Data
         public async Task<UserInfoDocument> GetUserInfo(string accountName)
         {
             var filter = Builders<UserInfoDocument>.Filter.Or(
-                Builders<UserInfoDocument>.Filter.Where(x => x.Unionid == accountName),
+                Builders<UserInfoDocument>.Filter.Where(x => x.UnionId == accountName),
+                Builders<UserInfoDocument>.Filter.Where(x => x.OpenId == accountName),
                 Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))),
                 Builders<UserInfoDocument>.Filter.Regex(x => x.Email, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))));
 
@@ -54,9 +55,13 @@ namespace HappyShop.Data
             {
                 filters.Add(Builders<UserInfoDocument>.Filter.Regex(x => x.Email, new BsonRegularExpression(new Regex(user.Email, RegexOptions.IgnoreCase))));
             }
-            if (!string.IsNullOrEmpty(user.Unionid))
+            if (!string.IsNullOrEmpty(user.UnionId))
             {
-                filters.Add(Builders<UserInfoDocument>.Filter.Where(x => x.Unionid == user.Unionid));
+                filters.Add(Builders<UserInfoDocument>.Filter.Where(x => x.UnionId == user.UnionId));
+            }
+            if (!string.IsNullOrEmpty(user.OpenId))
+            {
+                filters.Add(Builders<UserInfoDocument>.Filter.Where(x => x.OpenId == user.OpenId));
             }
 
             var filter = Builders<UserInfoDocument>.Filter.Or(filters);
@@ -70,7 +75,7 @@ namespace HappyShop.Data
                     .Set(d => d.OpenId, user.OpenId)
                     .Set(d => d.PassWord, user.PassWord)
                     .Set(d => d.PhoneNumber, user.PhoneNumber)
-                    .Set(d => d.Unionid, user.Unionid)
+                    .Set(d => d.UnionId, user.UnionId)
                     .Set(d => d.UpdateTime, DateTime.Now);
 
             var options = new FindOneAndUpdateOptions<UserInfoDocument> { IsUpsert = true, ReturnDocument = ReturnDocument.After };

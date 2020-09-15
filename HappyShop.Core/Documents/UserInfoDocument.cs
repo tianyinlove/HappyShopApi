@@ -17,7 +17,7 @@ namespace HappyShop.Documents
         /// <summary>
         /// Unionid 用户唯一标识
         /// </summary>
-        public string Unionid { get; set; }
+        public string UnionId { get; set; }
         /// <summary>
         /// OpenId
         /// </summary>

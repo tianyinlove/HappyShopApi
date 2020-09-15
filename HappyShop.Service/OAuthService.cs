@@ -39,12 +39,11 @@ namespace HappyShop.Service
         /// 微信获取code回调地址
         /// </summary>
         /// <param name="redirectUrl">redirectUrl</param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <param name="isApp">是否是APP端</param>
         /// <returns></returns>
-        public string GetWeChatCode(string redirectUrl, int acountId, bool isApp = true)
+        public string GetWeChatCode(string redirectUrl, WechatAccount wxConfig, bool isApp = true)
         {
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
             if (wxConfig == null)
             {
                 throw new Exception("账号不存在");
@@ -66,11 +65,10 @@ namespace HappyShop.Service
         /// 公众号 根据code获取AccessToken
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <returns></returns>
-        public async Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, int acountId)
+        public async Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, WechatAccount wxConfig)
         {
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
             if (wxConfig == null)
             {
                 throw new Exception("账号不存在");
@@ -151,15 +149,14 @@ namespace HappyShop.Service
         /// 小程序 临时登录凭证
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <returns></returns>
-        public async Task<WeChatLoginInfo> LoginAsync(string code, int acountId)
+        public async Task<WeChatLoginInfo> LoginAsync(string code, WechatAccount wxConfig)
         {
             if (string.IsNullOrEmpty(code))
             {
                 throw new Exception("小程序未授权");
             }
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
             if (wxConfig == null)
             {
                 throw new Exception("小程序账号不存在");
@@ -178,11 +175,12 @@ namespace HappyShop.Service
                 responseMessage.EnsureSuccessStatusCode();
                 var json = await responseMessage.Content.ReadAsStringAsync();
                 result = json.FromJson<WeChatLoginInfo>();
-                if (result != null && !string.IsNullOrEmpty(result.session_key))
+                if (result == null || string.IsNullOrEmpty(result.session_key))
                 {
-                    //小程序登录Code有效期只有5分钟
-                    _memoryCache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
+                    throw new Exception("小程序授权异常");
                 }
+                //小程序登录Code有效期只有5分钟
+                _memoryCache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
             }
             return result;
         }

@@ -1,4 +1,5 @@
-﻿using HappyShop.Domian;
+﻿using HappyShop.Comm;
+using HappyShop.Domian;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,18 +18,18 @@ namespace HappyShop.Service
         /// 微信获取code回调地址
         /// </summary>
         /// <param name="redirectUrl">redirectUrl</param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <param name="isApp">是否是APP端</param>
         /// <returns></returns>
-        string GetWeChatCode(string redirectUrl, int acountId, bool isApp = true);
+        string GetWeChatCode(string redirectUrl, WechatAccount wxConfig, bool isApp = true);
 
         /// <summary>
         /// 根据code获取AccessToken
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <returns></returns>
-        Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, int acountId);
+        Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, WechatAccount wxConfig);
 
         /// <summary>
         /// 根据accessToken和openId 获取用户信息
@@ -53,9 +54,9 @@ namespace HappyShop.Service
         /// 小程序 临时登录凭证
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="acountId"></param>
+        /// <param name="wxConfig"></param>
         /// <returns></returns>
-        Task<WeChatLoginInfo> LoginAsync(string code, int acountId);
+        Task<WeChatLoginInfo> LoginAsync(string code, WechatAccount wxConfig);
 
         /// <summary>
         /// 小程序解密

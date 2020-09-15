@@ -24,6 +24,7 @@ namespace HappyShop.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly ILogger<UserController> _logger;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUserInfoService _userInfoService;
         private readonly AppConfig _config;
@@ -34,9 +35,11 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         public UserController(IHttpContextAccessor httpContext,
             IOptionsMonitor<AppConfig> options,
+            ILogger<UserController> logger,
             IOAuthService oauthService,
             IUserInfoService userInfoService)
         {
+            _logger = logger;
             _httpContext = httpContext;
             _userInfoService = userInfoService;
             _config = options.CurrentValue;
@@ -52,8 +55,20 @@ namespace HappyShop.Api.Controllers
         [HttpPost]
         public async Task<ApiResult<UserInfo>> Login([FromBody]LoginRequest request)
         {
-            var user = await _userInfoService.LoginAsync(request);
-            return new ApiResult<UserInfo>(user);
+            try
+            {
+                var user = await _userInfoService.LoginAsync(request);
+                return new ApiResult<UserInfo>(user);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "登录异常", request);
+                throw new ApiException(-1, "服务器异常");
+            }
         }
 
         /// <summary>
@@ -86,11 +101,11 @@ namespace HappyShop.Api.Controllers
                 {
                     //首次握手               
                     string redirectUrl = $"{ wxConfig.RedirectUrl}{query}";
-                    _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), acountId, true), true);
+                    _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
                 }
                 else
                 {
-                    var accessToken = await _oauthService.GetWeChatAccessTokenAsync(code, acountId);
+                    var accessToken = await _oauthService.GetWeChatAccessTokenAsync(code, wxConfig);
                     if (accessToken == null)
                     {
                         throw new ApiException(-1, "code无效");
@@ -113,6 +128,7 @@ namespace HappyShop.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "微信授权异常", query);
                 throw new ApiException(-1, "服务器异常");
             }
         }

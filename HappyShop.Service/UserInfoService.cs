@@ -6,6 +6,7 @@ using HappyShop.Model;
 using HappyShop.Request;
 using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HappyShop.Service
@@ -17,15 +18,18 @@ namespace HappyShop.Service
     {
         private IUserInfoData _userInfoData;
         private IOAuthService _oathService;
+        private AppConfig _config;
 
         /// <summary>
         /// 
         /// </summary>
-        public UserInfoService(IOAuthService oAuthService,
+        public UserInfoService(IOptionsMonitor<AppConfig> options,
+            IOAuthService oAuthService,
             IUserInfoData userInfoData)
         {
             _userInfoData = userInfoData;
             _oathService = oAuthService;
+            _config = options.CurrentValue;
         }
 
         /// <summary>
@@ -43,14 +47,15 @@ namespace HappyShop.Service
             var result = new UserInfoDocument();
             if (string.IsNullOrEmpty(accountName))
             {
+                var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == request.AcountId);
                 //微信登录
-                var loginInfo = await _oathService.LoginAsync(request.Code, request.AcountId);
-                result = await _userInfoData.GetUserInfo(loginInfo.unionid);
+                var loginInfo = await _oathService.LoginAsync(request.Code, wxConfig);
+                result = await _userInfoData.GetUserInfo(loginInfo.unionid ?? loginInfo.openid);
                 if (result == null)
                 {
                     result = new UserInfoDocument
                     {
-                        Unionid = loginInfo.unionid,
+                        UnionId = loginInfo.unionid,
                         OpenId = loginInfo.openid,
                         CreateTime = DateTime.Now,
                         HeadImg = request.HeadImg,
@@ -64,7 +69,7 @@ namespace HappyShop.Service
                 {
                     //数据解密,序列化获取手机号码
                     var wx_user = _oathService.AESDecrypt<MiniUserPhone>(request.EncryptedData, loginInfo.session_key, request.Iv);
-                    if (wx_user != null)
+                    if (wx_user != null && !string.IsNullOrEmpty(wx_user.PhoneNumber))
                     {
                         result.PhoneNumber = wx_user.PhoneNumber;
                     }

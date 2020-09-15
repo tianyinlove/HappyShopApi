@@ -15,7 +15,7 @@ namespace HappyShop.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class HomeController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
@@ -23,7 +23,7 @@ namespace HappyShop.Api.Controllers
         };
 
         private readonly IUserInfoService _userInfoService;
-        public WeatherForecastController(IUserInfoService userInfoService)
+        public HomeController(IUserInfoService userInfoService)
         {
             _userInfoService = userInfoService;
         }
@@ -33,10 +33,9 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<object> Get()
+        public object Get()
         {
-            var data = await _userInfoService.LoginAsync(new LoginRequest { });
-            return new ApiResult<UserInfo>(data);
+            return new ApiResult<string>("ok");
         }
     }
 }
