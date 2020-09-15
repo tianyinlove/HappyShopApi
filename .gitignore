@@ -15,3 +15,9 @@
 /HappyShop.Data/bin/Debug/netstandard2.0
 /HappyShop.Service/bin/Debug/netstandard2.0
 /.vs/HappyShop/DesignTimeBuild
+/HappyShop.Api/bin/Release/netcoreapp3.1
+/HappyShop.Api/.config
+/HappyShop.Core/bin/Release/netstandard2.0
+/HappyShop.Data/bin/Release/netstandard2.0
+/HappyShop.Service/bin/Release/netstandard2.0
+/HappyShop.Abstractions/bin/Release/netstandard2.0
