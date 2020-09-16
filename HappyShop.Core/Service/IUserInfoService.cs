@@ -25,5 +25,13 @@ namespace HappyShop.Service
         /// <param name="request"></param>
         /// <returns></returns>
         Task<UserInfo> RegisterAsync(LoginRequest request);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acountId"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        Task<WechatJSTicket> GetJsApiSign(int acountId, string url);
     }
 }

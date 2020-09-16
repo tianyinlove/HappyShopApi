@@ -33,6 +33,7 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [HttpPost]
         public object Get()
         {
             return new ApiResult<string>("ok");

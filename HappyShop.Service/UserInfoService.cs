@@ -8,6 +8,11 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
+using Utility.Extensions;
+using Utility.NetLog;
+using Utility.Model;
+using Utility.Constants;
 
 namespace HappyShop.Service
 {
@@ -82,11 +87,11 @@ namespace HappyShop.Service
                 result = await _userInfoData.GetUserInfo(accountName);
                 if (result == null)
                 {
-                    throw new Exception("账号不存在，请先注册");
+                    throw new ApiException(-1, "账号不存在，请先注册");
                 }
                 if (string.IsNullOrEmpty(request.PassWord) || request.PassWord != result.PassWord)
                 {
-                    throw new Exception("登录密码错误");
+                    throw new ApiException(-1, "登录密码错误");
                 }
             }
             return result.Convert<UserInfoDocument, UserInfo>();
@@ -101,29 +106,29 @@ namespace HappyShop.Service
         {
             if (string.IsNullOrEmpty(request.PhoneNumber) && string.IsNullOrEmpty(request.Email))
             {
-                throw new Exception("注册账号不能为空");
+                throw new ApiException(-1, "注册账号不能为空");
             }
             if (string.IsNullOrEmpty(request.PassWord))
             {
-                throw new Exception("密码不能为空");
+                throw new ApiException(-1, "密码不能为空");
             }
             if (request.PassWord.Length < 6)
             {
-                throw new Exception("密码不能少于6位");
+                throw new ApiException(-1, "密码不能少于6位");
             }
 
             if (!string.IsNullOrEmpty(request.PhoneNumber))
             {
                 if (await _userInfoData.GetUserInfo(request.PhoneNumber) != null)
                 {
-                    throw new Exception("手机号已被注册或已被其它账号绑定");
+                    throw new ApiException(-1, "手机号已被注册或已被其它账号绑定");
                 }
             }
             if (!string.IsNullOrEmpty(request.Email))
             {
                 if (await _userInfoData.GetUserInfo(request.Email) != null)
                 {
-                    throw new Exception("邮箱已被注册或已被其它账号绑定");
+                    throw new ApiException(-1, "邮箱已被注册或已被其它账号绑定");
                 }
             }
 
@@ -137,6 +142,44 @@ namespace HappyShop.Service
             };
             result = await _userInfoData.SaveUpdate(result);
             return result.Convert<UserInfoDocument, UserInfo>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acountId"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public async Task<WechatJSTicket> GetJsApiSign(int acountId, string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ApiException(-1, "参数异常");
+            }
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var accessToken = await _oathService.GetWeChatAccessTokenAsync(wxConfig);
+            if (accessToken == null || string.IsNullOrEmpty(accessToken.Access_Token))
+            {
+                throw new ApiException(-1, "获取JSAPITock失败");
+            }
+            var ticketInfo = await _oathService.GetWeChatTicketAsync(accessToken.Access_Token);
+            if (ticketInfo == null || string.IsNullOrEmpty(ticketInfo.Ticket))
+            {
+                throw new ApiException(-1, "授权失败");
+            }
+            var result = new WechatJSTicket
+            {
+                NonceStr = Guid.NewGuid().ToString().Replace("-", ""),
+                Timestamp = DateTime.Now.ValueOf()
+            };
+            url = HttpUtility.UrlDecode(url);
+            var urlQuery = $"jsapi_ticket={ticketInfo.Ticket}&noncestr={result.NonceStr}&timestamp={result.Timestamp}&url={url}";
+            //加密
+            result.Signature = urlQuery.Sha1();
+
+            Logger.WriteLog(LogLevel.Debug, $"微信加密数据 {urlQuery} {result.ToJson()}");
+
+            return result;
         }
     }
 }

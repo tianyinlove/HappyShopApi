@@ -37,7 +37,6 @@ namespace HappyShop.Api
             services.Configure<AppConfig>(Configuration);
             services.AddMemoryCache();
             services.AddHttpClient();
-            services.AddLogging();
             services.AddHappyShopService();
             services.AddHappyShopData();
             services.AddControllers();
@@ -53,6 +52,8 @@ namespace HappyShop.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseException();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -63,8 +64,6 @@ namespace HappyShop.Api
             {
                 endpoints.MapControllers();
             });
-
-            app.UseException();
         }
     }
 }

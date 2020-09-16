@@ -4,16 +4,19 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HappyShop.Comm;
+using HappyShop.Domian;
 using HappyShop.Model;
 using HappyShop.Request;
 using HappyShop.Service;
+using log4net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Utility.Extensions;
+using Utility.NetLog;
 using Utility.Model;
 using Utility.NetCore;
+using Utility.Constants;
 
 namespace HappyShop.Api.Controllers
 {
@@ -24,22 +27,18 @@ namespace HappyShop.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUserInfoService _userInfoService;
         private readonly AppConfig _config;
         private readonly IOAuthService _oauthService;
-
         /// <summary>
         /// 
         /// </summary>
         public UserController(IHttpContextAccessor httpContext,
             IOptionsMonitor<AppConfig> options,
-            ILogger<UserController> logger,
             IOAuthService oauthService,
             IUserInfoService userInfoService)
         {
-            _logger = logger;
             _httpContext = httpContext;
             _userInfoService = userInfoService;
             _config = options.CurrentValue;
@@ -51,24 +50,12 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet]
         [HttpPost]
-        public async Task<ApiResult<UserInfo>> Login([FromBody]LoginRequest request)
+        public async Task<IActionResult> Login([FromBody]LoginRequest request)
         {
-            try
-            {
-                var user = await _userInfoService.LoginAsync(request);
-                return new ApiResult<UserInfo>(user);
-            }
-            catch (ApiException ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "登录异常", request);
-                throw new ApiException(-1, "服务器异常");
-            }
+            Logger.WriteLog(LogLevel.Debug, "用户登录", request);
+            var result = await _userInfoService.LoginAsync(request);
+            return new ApiResult<UserInfo>(result);
         }
 
         /// <summary>
@@ -77,10 +64,23 @@ namespace HappyShop.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ApiResult<UserInfo>> Register([FromBody]LoginRequest request)
+        public async Task<IActionResult> Register([FromBody]LoginRequest request)
         {
-            var user = await _userInfoService.RegisterAsync(request);
-            return new ApiResult<UserInfo>(user);
+            var result = await _userInfoService.RegisterAsync(request);
+            return new ApiResult<UserInfo>(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acountId"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetJsApiSign(int acountId, string url)
+        {
+            var result = await _userInfoService.GetJsApiSign(acountId, url);
+            return new ApiResult<WechatJSTicket>(result);
         }
 
         #region 微信
@@ -90,47 +90,37 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [HttpPost]
-        public async Task WeChat(int acountId = 2, string code = "")
+        public void WeChat(int acountId = 2)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
-            try
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            //首次握手               
+            string redirectUrl = $"{ wxConfig.RedirectUrl}{query}";
+            _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
+        }
+
+        /// <summary>
+        /// 获取微信用户信息
+        /// </summary>
+        /// <param name="acountId"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> WeChatUser(int acountId, string code)
+        {
+            if (string.IsNullOrEmpty(code))
             {
-                var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
-                if (string.IsNullOrEmpty(code))
-                {
-                    //首次握手               
-                    string redirectUrl = $"{ wxConfig.RedirectUrl}{query}";
-                    _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
-                }
-                else
-                {
-                    var accessToken = await _oauthService.GetWeChatAccessTokenAsync(code, wxConfig);
-                    if (accessToken == null)
-                    {
-                        throw new ApiException(-1, "code无效");
-                    }
-                    var ticketInfo = await _oauthService.GetWeChatTicketAsync(accessToken.Access_Token);
-                    if (ticketInfo == null)
-                    {
-                        throw new ApiException(-1, "授权失败");
-                    }
-                    var urlQuery = $"jsapi_ticket={ticketInfo.Ticket}&noncestr={Guid.NewGuid().ToString().Replace("-", "")}&timestamp={DateTime.Now.ValueOf()}";
-                    //加密
-                    var signature = $"{urlQuery}&url={wxConfig.SuccessUrl}".Sha1();
-                    string redirectUrl = $"{ wxConfig.SuccessUrl}{query}&{urlQuery}&signature={signature}";
-                    _httpContext.HttpContext.Response.Redirect(redirectUrl);
-                }
+                throw new ApiException(-1, "code不能为空");
             }
-            catch (ApiException ex)
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var accessToken = await _oauthService.GetWeChatAccessTokenAsync(wxConfig, code);
+            if (accessToken == null)
             {
-                throw ex;
+                throw new ApiException(-1, "code无效");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "微信授权异常", query);
-                throw new ApiException(-1, "服务器异常");
-            }
+
+            var result = await _oauthService.GetWeChatUserInfoAsync(accessToken.Access_Token, accessToken.OpenId);
+            return new ApiResult<WeChatUserInfo>(result);
         }
 
         #endregion 微信

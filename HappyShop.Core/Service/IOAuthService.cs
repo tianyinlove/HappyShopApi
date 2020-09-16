@@ -12,6 +12,21 @@ namespace HappyShop.Service
     /// </summary>
     public interface IOAuthService
     {
+        /// <summary>
+        /// 公众号/小程序 获取AccessToken
+        /// </summary>
+        /// <param name="wxConfig"></param>
+        /// <param name="code">为空时获取的是JSAPI临时Token</param>
+        /// <returns></returns>
+        Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(WechatAccount wxConfig, string code = "");
+
+        /// <summary>
+        /// 公众号 根据accessToken获取jsapi_ticket
+        /// </summary>
+        /// <param name="accessToken">JSAPI临时Token</param>
+        /// <returns></returns>
+        Task<WechatTicketInfo> GetWeChatTicketAsync(string accessToken);
+
         #region 公众号
 
         /// <summary>
@@ -24,27 +39,12 @@ namespace HappyShop.Service
         string GetWeChatCode(string redirectUrl, WechatAccount wxConfig, bool isApp = true);
 
         /// <summary>
-        /// 根据code获取AccessToken
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="wxConfig"></param>
-        /// <returns></returns>
-        Task<WeChatAccessTokenInfo> GetWeChatAccessTokenAsync(string code, WechatAccount wxConfig);
-
-        /// <summary>
         /// 根据accessToken和openId 获取用户信息
         /// </summary>
         /// <param name="accessToken">accessToken</param>
         /// <param name="openId">openId</param>
         /// <returns></returns>
         Task<WeChatUserInfo> GetWeChatUserInfoAsync(string accessToken, string openId);
-
-        /// <summary>
-        /// 公众号 根据accessToken获取jsapi_ticket
-        /// </summary>
-        /// <param name="accessToken"></param>
-        /// <returns></returns>
-        Task<WechatTicketInfo> GetWeChatTicketAsync(string accessToken);
 
         #endregion 公众号
 
