@@ -7,27 +7,35 @@ namespace HappyShop.Request
     /// <summary>
     /// 
     /// </summary>
-    public class LoginRequest
+    public class UserReuqest
     {
-        #region 账号密码
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id { get; set; }
         /// <summary>
         /// 用户手机号(登录名)
         /// </summary>
         public string PhoneNumber { get; set; }
         /// <summary>
-        /// 用户邮箱(登录名)
-        /// </summary>
-        public string Email { get; set; }
-        /// <summary>
         /// 用户登录密码
         /// </summary>
         public string PassWord { get; set; }
-        
-        #endregion 账号密码
+        /// <summary>
+        /// 头像
+        /// </summary>
+        public string HeadImg { get; set; }
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string NickName { get; set; }
+    }
 
-        #region 微信登录
-
+    /// <summary>
+    /// 
+    /// </summary>
+    public class WechatRequest : UserReuqest
+    {
         /// <summary>
         /// 配置账号ID
         /// </summary>
@@ -41,18 +49,8 @@ namespace HappyShop.Request
         /// </summary>
         public string EncryptedData { get; set; }
         /// <summary>
-        /// 头像
-        /// </summary>
-        public string HeadImg { get; set; }
-        /// <summary>
-        /// 昵称
-        /// </summary>
-        public string NickName { get; set; }
-        /// <summary>
         /// 微信临时code
         /// </summary>
         public string Code { get; set; }
-
-        #endregion 微信登录
     }
 }

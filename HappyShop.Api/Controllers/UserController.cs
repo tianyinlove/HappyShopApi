@@ -46,27 +46,26 @@ namespace HappyShop.Api.Controllers
         }
 
         /// <summary>
-        /// 用户登录
+        /// 微信/用户名密码登录
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]LoginRequest request)
+        public async Task<IActionResult> Login([FromBody]WechatRequest request)
         {
-            Logger.WriteLog(LogLevel.Debug, "用户登录", request);
             var result = await _userInfoService.LoginAsync(request);
             return new ApiResult<UserInfo>(result);
         }
 
         /// <summary>
-        /// 注册用户
+        /// 注册/修改用户信息
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]LoginRequest request)
+        public async Task<IActionResult> BindUser([FromBody]UserReuqest request)
         {
-            var result = await _userInfoService.RegisterAsync(request);
+            var result = await _userInfoService.SaveUpdateAsync(request);
             return new ApiResult<UserInfo>(result);
         }
 

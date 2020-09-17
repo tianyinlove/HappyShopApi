@@ -42,20 +42,15 @@ namespace HappyShop.Service
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<UserInfo> LoginAsync(LoginRequest request)
+        public async Task<UserInfo> LoginAsync(WechatRequest request)
         {
-            var accountName = request.PhoneNumber;
-            if (string.IsNullOrEmpty(accountName))
-            {
-                accountName = request.Email;
-            }
             var result = new UserInfoDocument();
-            if (string.IsNullOrEmpty(accountName))
+            if (string.IsNullOrEmpty(request.PhoneNumber))
             {
                 var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == request.AcountId);
                 //微信登录
                 var loginInfo = await _oathService.LoginAsync(request.Code, wxConfig);
-                result = await _userInfoData.GetUserInfo(loginInfo.unionid ?? loginInfo.openid);
+                result = await _userInfoData.GetUserByAccount(loginInfo.unionid ?? loginInfo.openid);
                 if (result == null)
                 {
                     result = new UserInfoDocument
@@ -84,7 +79,7 @@ namespace HappyShop.Service
             else
             {
                 //账号密码登录
-                result = await _userInfoData.GetUserInfo(accountName);
+                result = await _userInfoData.GetUserByAccount(request.PhoneNumber);
                 if (result == null)
                 {
                     throw new ApiException(-1, "账号不存在，请先注册");
@@ -98,48 +93,64 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        /// 修改或者注册用户信息
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<UserInfo> RegisterAsync(LoginRequest request)
+        public async Task<UserInfo> SaveUpdateAsync(UserReuqest request)
         {
-            if (string.IsNullOrEmpty(request.PhoneNumber) && string.IsNullOrEmpty(request.Email))
+            var result = new UserInfoDocument();
+            if (!string.IsNullOrEmpty(request.Id))
             {
-                throw new ApiException(-1, "注册账号不能为空");
+                result = await _userInfoData.GetUserById(request.Id);
             }
-            if (string.IsNullOrEmpty(request.PassWord))
+            else//新账号需要判断手机号和密码是否正常
             {
-                throw new ApiException(-1, "密码不能为空");
-            }
-            if (request.PassWord.Length < 6)
-            {
-                throw new ApiException(-1, "密码不能少于6位");
-            }
+                if (string.IsNullOrEmpty(request.PhoneNumber))
+                {
+                    throw new ApiException(-1, "手机号不能为空");
+                }
 
+                if (!request.PhoneNumber.IsPhone())
+                {
+                    throw new ApiException(-1, "手机号不正确");
+                }
+
+                if (string.IsNullOrEmpty(request.PassWord))
+                {
+                    throw new ApiException(-1, "密码不能为空");
+                }
+            }
+            //修改头像
+            if (!string.IsNullOrEmpty(request.HeadImg))
+            {
+                result.HeadImg = request.HeadImg;
+            }
+            //修改昵称
+            if (!string.IsNullOrEmpty(request.NickName))
+            {
+                result.NickName = request.NickName;
+            }
+            //修改密码时间判断密码长度
+            if (!string.IsNullOrEmpty(request.PassWord))
+            {
+                if (request.PassWord.Length < 6)
+                {
+                    throw new ApiException(-1, "密码长度不能小于6位");
+                }
+                result.PassWord = request.PassWord;
+            }
+            //修改手机时判断手机是否被绑定
             if (!string.IsNullOrEmpty(request.PhoneNumber))
             {
-                if (await _userInfoData.GetUserInfo(request.PhoneNumber) != null)
+                var old = await _userInfoData.GetUserByAccount(request.PhoneNumber);
+                if (old != null && old.Id.ToString() != request.Id)
                 {
                     throw new ApiException(-1, "手机号已被注册或已被其它账号绑定");
                 }
-            }
-            if (!string.IsNullOrEmpty(request.Email))
-            {
-                if (await _userInfoData.GetUserInfo(request.Email) != null)
-                {
-                    throw new ApiException(-1, "邮箱已被注册或已被其它账号绑定");
-                }
+                result.PhoneNumber = request.PhoneNumber;
             }
 
-            var result = new UserInfoDocument
-            {
-                PhoneNumber = request.PhoneNumber,
-                Email = request.Email,
-                HeadImg = request.HeadImg,
-                NickName = request.NickName,
-                PassWord = request.PassWord
-            };
             result = await _userInfoData.SaveUpdate(result);
             return result.Convert<UserInfoDocument, UserInfo>();
         }

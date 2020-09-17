@@ -16,7 +16,14 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        Task<UserInfoDocument> GetUserInfo(string accountName);
+        Task<UserInfoDocument> GetUserByAccount(string accountName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<UserInfoDocument> GetUserById(string id);
 
         /// <summary>
         /// 

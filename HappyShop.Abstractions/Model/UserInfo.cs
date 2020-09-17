@@ -34,10 +34,6 @@ namespace HappyShop.Model
         /// </summary>
         public string PhoneNumber { get; set; }
         /// <summary>
-        /// 用户邮箱(登录名)
-        /// </summary>
-        public string Email { get; set; }
-        /// <summary>
         /// 注册时间
         /// </summary>
         public DateTime CreateTime { get; set; }

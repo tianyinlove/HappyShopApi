@@ -35,10 +35,6 @@ namespace HappyShop.Documents
         /// </summary>
         public string PhoneNumber { get; set; }
         /// <summary>
-        /// 用户邮箱(登录名) 用户唯一标识
-        /// </summary>
-        public string Email { get; set; }
-        /// <summary>
         /// 用户登录密码
         /// </summary>
         public string PassWord { get; set; }

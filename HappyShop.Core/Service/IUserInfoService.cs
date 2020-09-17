@@ -17,14 +17,14 @@ namespace HappyShop.Service
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<UserInfo> LoginAsync(LoginRequest request);
+        Task<UserInfo> LoginAsync(WechatRequest request);
 
         /// <summary>
-        /// 
+        /// 注册/修改用户信息
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<UserInfo> RegisterAsync(LoginRequest request);
+        Task<UserInfo> SaveUpdateAsync(UserReuqest request);
 
         /// <summary>
         /// 

@@ -28,15 +28,24 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        public async Task<UserInfoDocument> GetUserInfo(string accountName)
+        public async Task<UserInfoDocument> GetUserByAccount(string accountName)
         {
             var filter = Builders<UserInfoDocument>.Filter.Or(
                 Builders<UserInfoDocument>.Filter.Where(x => x.UnionId == accountName),
                 Builders<UserInfoDocument>.Filter.Where(x => x.OpenId == accountName),
-                Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))),
-                Builders<UserInfoDocument>.Filter.Regex(x => x.Email, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))));
+                Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))));
 
             return await _userInfo.Find(filter).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<UserInfoDocument> GetUserById(string id)
+        {
+            return await _userInfo.Find(id).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -50,10 +59,6 @@ namespace HappyShop.Data
             if (!string.IsNullOrEmpty(user.PhoneNumber))
             {
                 filters.Add(Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(user.PhoneNumber, RegexOptions.IgnoreCase))));
-            }
-            if (!string.IsNullOrEmpty(user.Email))
-            {
-                filters.Add(Builders<UserInfoDocument>.Filter.Regex(x => x.Email, new BsonRegularExpression(new Regex(user.Email, RegexOptions.IgnoreCase))));
             }
             if (!string.IsNullOrEmpty(user.UnionId))
             {
@@ -69,7 +74,6 @@ namespace HappyShop.Data
             var update = Builders<UserInfoDocument>.Update
                     .SetOnInsert(d => d.Id, Guid.NewGuid())
                     .SetOnInsert(d => d.CreateTime, DateTime.Now)
-                    .Set(d => d.Email, user.Email)
                     .Set(d => d.HeadImg, user.HeadImg)
                     .Set(d => d.NickName, user.NickName)
                     .Set(d => d.OpenId, user.OpenId)
