@@ -54,6 +54,10 @@ namespace HappyShop.Api.Controllers
         public async Task<IActionResult> Login([FromBody]WechatRequest request)
         {
             var result = await _userInfoService.LoginAsync(request);
+            if (result != null && !string.IsNullOrEmpty(result.PhoneNumber))
+            {
+                result.PhoneNumber = result.PhoneNumber.MaskPhone();
+            }
             return new ApiResult<UserInfo>(result);
         }
 
@@ -66,6 +70,10 @@ namespace HappyShop.Api.Controllers
         public async Task<IActionResult> BindUser([FromBody]UserReuqest request)
         {
             var result = await _userInfoService.SaveUpdateAsync(request);
+            if (result != null && !string.IsNullOrEmpty(result.PhoneNumber))
+            {
+                result.PhoneNumber = result.PhoneNumber.MaskPhone();
+            }
             return new ApiResult<UserInfo>(result);
         }
 

@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,8 @@ namespace HappyShop.Documents
         /// <summary>
         /// 
         /// </summary>
-        public Guid Id { get; set; }
+        [BsonId]
+        public string Id { get; set; }
         /// <summary>
         /// Unionid 用户唯一标识
         /// </summary>

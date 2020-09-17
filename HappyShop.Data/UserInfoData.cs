@@ -45,7 +45,7 @@ namespace HappyShop.Data
         /// <returns></returns>
         public async Task<UserInfoDocument> GetUserById(string id)
         {
-            return await _userInfo.Find(id).FirstOrDefaultAsync();
+            return await _userInfo.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace HappyShop.Data
             var filter = Builders<UserInfoDocument>.Filter.Or(filters);
 
             var update = Builders<UserInfoDocument>.Update
-                    .SetOnInsert(d => d.Id, Guid.NewGuid())
+                    .SetOnInsert(d => d.Id, Guid.NewGuid().ToString())
                     .SetOnInsert(d => d.CreateTime, DateTime.Now)
                     .Set(d => d.HeadImg, user.HeadImg)
                     .Set(d => d.NickName, user.NickName)

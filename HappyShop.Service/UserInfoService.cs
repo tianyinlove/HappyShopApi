@@ -104,7 +104,12 @@ namespace HappyShop.Service
             {
                 result = await _userInfoData.GetUserById(request.Id);
             }
-            else//新账号需要判断手机号和密码是否正常
+            if (result == null)
+            {
+                result = new UserInfoDocument();
+            }
+            //新账号需要判断手机号和密码是否正常
+            if (string.IsNullOrEmpty(result.Id))
             {
                 if (string.IsNullOrEmpty(request.PhoneNumber))
                 {
@@ -114,6 +119,11 @@ namespace HappyShop.Service
                 if (!request.PhoneNumber.IsPhone())
                 {
                     throw new ApiException(-1, "手机号不正确");
+                }
+
+                if (string.IsNullOrEmpty(request.NickName))
+                {
+                    throw new ApiException(-1, "昵称不能为空");
                 }
 
                 if (string.IsNullOrEmpty(request.PassWord))
@@ -143,12 +153,15 @@ namespace HappyShop.Service
             //修改手机时判断手机是否被绑定
             if (!string.IsNullOrEmpty(request.PhoneNumber))
             {
-                var old = await _userInfoData.GetUserByAccount(request.PhoneNumber);
-                if (old != null && old.Id.ToString() != request.Id)
+                if (request.PhoneNumber.IndexOf("*") < 0)
                 {
-                    throw new ApiException(-1, "手机号已被注册或已被其它账号绑定");
+                    var old = await _userInfoData.GetUserByAccount(request.PhoneNumber);
+                    if (old != null && old.Id.ToString() != request.Id)
+                    {
+                        throw new ApiException(-1, "手机号已被注册或已被其它账号绑定");
+                    }
+                    result.PhoneNumber = request.PhoneNumber;
                 }
-                result.PhoneNumber = request.PhoneNumber;
             }
 
             result = await _userInfoData.SaveUpdate(result);
