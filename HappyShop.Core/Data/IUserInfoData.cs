@@ -1,4 +1,4 @@
-﻿using HappyShop.Documents;
+﻿using HappyShop.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,20 +16,20 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        Task<UserInfoDocument> GetUserByAccount(string accountName);
+        Task<UserInfoEntity> GetUserByAccount(string accountName);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<UserInfoDocument> GetUserById(string id);
+        Task<UserInfoEntity> GetUserById(string id);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task<UserInfoDocument> SaveUpdate(UserInfoDocument user);
+        Task<UserInfoEntity> SaveUpdate(UserInfoEntity user);
     }
 }

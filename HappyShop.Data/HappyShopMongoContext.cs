@@ -12,7 +12,7 @@ namespace HappyShop.Data
     /// <summary>
     /// 
     /// </summary>
-    class HappyShopMongoContext : IHappyShopMongoContext
+    internal class HappyShopMongoContext
     {
         /// <summary>
         /// 

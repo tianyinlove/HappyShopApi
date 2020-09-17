@@ -1,4 +1,8 @@
-﻿using HappyShop.Documents;
+﻿using HappyShop.Comm;
+using HappyShop.Documents;
+using HappyShop.Domian;
+using HappyShop.Entity;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -18,8 +22,9 @@ namespace HappyShop.Data
         /// <summary>
         /// 
         /// </summary>
-        public UserInfoData(IHappyShopMongoContext mongoContext)
+        public UserInfoData(IOptionsMonitor<AppConfig> options)
         {
+            var mongoContext = new HappyShopMongoContext(options);
             _userInfo = mongoContext.Collection<UserInfoDocument>();
         }
 
@@ -28,14 +33,15 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        public async Task<UserInfoDocument> GetUserByAccount(string accountName)
+        public async Task<UserInfoEntity> GetUserByAccount(string accountName)
         {
             var filter = Builders<UserInfoDocument>.Filter.Or(
                 Builders<UserInfoDocument>.Filter.Where(x => x.UnionId == accountName),
                 Builders<UserInfoDocument>.Filter.Where(x => x.OpenId == accountName),
                 Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))));
 
-            return await _userInfo.Find(filter).FirstOrDefaultAsync();
+            var result = await _userInfo.Find(filter).FirstOrDefaultAsync();
+            return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
 
         /// <summary>
@@ -43,9 +49,10 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<UserInfoDocument> GetUserById(string id)
+        public async Task<UserInfoEntity> GetUserById(string id)
         {
-            return await _userInfo.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var result = await _userInfo.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
 
         /// <summary>
@@ -53,7 +60,7 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<UserInfoDocument> SaveUpdate(UserInfoDocument user)
+        public async Task<UserInfoEntity> SaveUpdate(UserInfoEntity user)
         {
             var filters = new List<FilterDefinition<UserInfoDocument>>();
             if (!string.IsNullOrEmpty(user.PhoneNumber))
@@ -84,7 +91,8 @@ namespace HappyShop.Data
 
             var options = new FindOneAndUpdateOptions<UserInfoDocument> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
 
-            return await _userInfo.FindOneAndUpdateAsync(filter, update, options);
+            var result = await _userInfo.FindOneAndUpdateAsync(filter, update, options);
+            return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
     }
 }

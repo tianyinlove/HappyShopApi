@@ -21,3 +21,5 @@
 /HappyShop.Data/bin/Release/netstandard2.0
 /HappyShop.Service/bin/Release/netstandard2.0
 /HappyShop.Abstractions/bin/Release/netstandard2.0
+/HappyShop.SQLData/bin/Debug/netstandard2.0
+/HappyShop.SQLData/obj

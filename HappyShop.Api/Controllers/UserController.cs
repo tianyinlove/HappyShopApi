@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HappyShop.Comm;
-using HappyShop.Domian;
 using HappyShop.Model;
 using HappyShop.Request;
 using HappyShop.Service;
@@ -17,6 +16,7 @@ using Utility.NetLog;
 using Utility.Model;
 using Utility.NetCore;
 using Utility.Constants;
+using HappyShop.Domian;
 
 namespace HappyShop.Api.Controllers
 {

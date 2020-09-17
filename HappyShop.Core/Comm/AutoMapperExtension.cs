@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HappyShop.Documents;
-using HappyShop.Model;
+using HappyShop.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,11 @@ namespace HappyShop.Comm
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<UserInfoDocument, UserInfo>();
-            });
+                cfg.CreateMap<UserInfoEntity, UserInfoDocument>();
+                cfg.CreateMap<UserInfoDocument, UserInfoEntity>();
 
+                cfg.CreateMap<UserInfoEntity, Model.UserInfo>();
+            });
             _mapper = config.CreateMapper();
         }
 

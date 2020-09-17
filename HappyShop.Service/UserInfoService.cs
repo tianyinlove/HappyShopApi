@@ -1,8 +1,5 @@
 ﻿using HappyShop.Comm;
 using HappyShop.Data;
-using HappyShop.Documents;
-using HappyShop.Domian;
-using HappyShop.Model;
 using HappyShop.Request;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,6 +10,8 @@ using Utility.Extensions;
 using Utility.NetLog;
 using Utility.Model;
 using Utility.Constants;
+using HappyShop.Entity;
+using HappyShop.Model;
 
 namespace HappyShop.Service
 {
@@ -44,7 +43,7 @@ namespace HappyShop.Service
         /// <returns></returns>
         public async Task<UserInfo> LoginAsync(WechatRequest request)
         {
-            var result = new UserInfoDocument();
+            var result = new UserInfoEntity();
             if (string.IsNullOrEmpty(request.PhoneNumber))
             {
                 var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == request.AcountId);
@@ -53,7 +52,7 @@ namespace HappyShop.Service
                 result = await _userInfoData.GetUserByAccount(loginInfo.unionid ?? loginInfo.openid);
                 if (result == null)
                 {
-                    result = new UserInfoDocument
+                    result = new UserInfoEntity
                     {
                         UnionId = loginInfo.unionid,
                         OpenId = loginInfo.openid,
@@ -68,7 +67,7 @@ namespace HappyShop.Service
                 if (string.IsNullOrEmpty(result.PhoneNumber) && !string.IsNullOrEmpty(request.EncryptedData) && !string.IsNullOrEmpty(request.Iv))
                 {
                     //数据解密,序列化获取手机号码
-                    var wx_user = _oathService.AESDecrypt<MiniUserPhone>(request.EncryptedData, loginInfo.session_key, request.Iv);
+                    var wx_user = _oathService.AESDecrypt<Domian.MiniUserPhone>(request.EncryptedData, loginInfo.session_key, request.Iv);
                     if (wx_user != null && !string.IsNullOrEmpty(wx_user.PhoneNumber))
                     {
                         result.PhoneNumber = wx_user.PhoneNumber;
@@ -89,7 +88,7 @@ namespace HappyShop.Service
                     throw new ApiException(-1, "登录密码错误");
                 }
             }
-            return result.Convert<UserInfoDocument, UserInfo>();
+            return result.Convert<UserInfoEntity, UserInfo>();
         }
 
         /// <summary>
@@ -99,14 +98,14 @@ namespace HappyShop.Service
         /// <returns></returns>
         public async Task<UserInfo> SaveUpdateAsync(UserReuqest request)
         {
-            var result = new UserInfoDocument();
+            var result = new UserInfoEntity();
             if (!string.IsNullOrEmpty(request.Id))
             {
                 result = await _userInfoData.GetUserById(request.Id);
             }
             if (result == null)
             {
-                result = new UserInfoDocument();
+                result = new UserInfoEntity();
             }
             //新账号需要判断手机号和密码是否正常
             if (string.IsNullOrEmpty(result.Id))
@@ -165,7 +164,7 @@ namespace HappyShop.Service
             }
 
             result = await _userInfoData.SaveUpdate(result);
-            return result.Convert<UserInfoDocument, UserInfo>();
+            return result.Convert<UserInfoEntity, UserInfo>();
         }
 
         /// <summary>
