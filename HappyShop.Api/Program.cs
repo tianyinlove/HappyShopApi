@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HappyShop.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +21,12 @@ namespace HappyShop.Api
         {
             var hostBuilber = CreateHostBuilder(args);
             var host = hostBuilber.Build();
+            //程序启动时执行初始化
+            using (var scope = host.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetService<IUserInfoData>();
+                db.InitData();
+            }
             host.Run();
         }
 

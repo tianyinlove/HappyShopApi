@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace HappyShop.Data
     /// </summary>
     class UserInfoData : IUserInfoData
     {
+        private HappyShopMongoContext _mongoContext;
         private IMongoCollection<UserInfoDocument> _userInfo;
 
         /// <summary>
@@ -24,8 +26,16 @@ namespace HappyShop.Data
         /// </summary>
         public UserInfoData(IOptionsMonitor<AppConfig> options)
         {
-            var mongoContext = new HappyShopMongoContext(options);
-            _userInfo = mongoContext.Collection<UserInfoDocument>();
+            _mongoContext = new HappyShopMongoContext(options);
+            _userInfo = _mongoContext.Collection<UserInfoDocument>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitData()
+        {
+            _mongoContext.InitUserInfoIndexs();
         }
 
         /// <summary>

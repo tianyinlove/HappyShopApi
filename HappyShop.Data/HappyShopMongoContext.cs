@@ -1,8 +1,10 @@
 ﻿using HappyShop.Comm;
+using HappyShop.Documents;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +29,47 @@ namespace HappyShop.Data
         {
             var client = new MongoClient(options.CurrentValue.MongodbConfig.ConnectionString);
             Database = client.GetDatabase(options.CurrentValue.MongodbConfig.DatabaseName);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitUserInfoIndexs()
+        {
+            var collection = Collection<UserInfoDocument>();
+            var indexes = collection.Indexes.List().ToList();
+            if (!indexes.Any(d => d.GetElement("name").Value.AsString == "PhoneNumber"))
+            {
+                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
+                    Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.PhoneNumber),
+                    new CreateIndexOptions
+                    {
+                        Name = "PhoneNumber",
+                        Background = true
+                    }));
+            }
+
+            if (!indexes.Any(d => d.GetElement("name").Value.AsString == "UnionId"))
+            {
+                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
+                    Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.UnionId),
+                    new CreateIndexOptions
+                    {
+                        Name = "UnionId",
+                        Background = true
+                    }));
+            }
+
+            if (!indexes.Any(d => d.GetElement("name").Value.AsString == "OpenId"))
+            {
+                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
+                    Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.OpenId),
+                    new CreateIndexOptions
+                    {
+                        Name = "OpenId",
+                        Background = true
+                    }));
+            }
         }
 
         /// <summary>

@@ -14,6 +14,11 @@ namespace HappyShop.Data
         /// <summary>
         /// 
         /// </summary>
+        void InitData();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
         Task<UserInfoEntity> GetUserByAccount(string accountName);
