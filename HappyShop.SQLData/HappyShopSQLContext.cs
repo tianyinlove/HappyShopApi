@@ -33,7 +33,7 @@ namespace HappyShop.Data
         {
             optionsBuilder.UseSqlite($"Data Source=\"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "HappyShop.db")}\"", sqliteOptionsBuilder =>
             {
-                sqliteOptionsBuilder.MigrationsAssembly(assemblyName: "HappyShop.Data");
+                sqliteOptionsBuilder.MigrationsAssembly("HappyShop.Data");
             });
         }
 

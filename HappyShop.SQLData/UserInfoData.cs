@@ -1,4 +1,5 @@
 ﻿using HappyShop.Comm;
+using HappyShop.Data;
 using HappyShop.Domian;
 using HappyShop.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace HappyShop.Data
     /// <summary>
     /// 
     /// </summary>
-    class UserInfoData
+    class UserInfoData : IUserInfoData
     {
         private HappyShopSQLContext _shopSQLContext;
 
@@ -28,7 +29,7 @@ namespace HappyShop.Data
         /// <summary>
         /// 
         /// </summary>
-        public void EnsureMigrate()
+        public void InitData()
         {
             _shopSQLContext.EnsureMigrate();
         }

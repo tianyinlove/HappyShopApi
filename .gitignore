@@ -23,3 +23,7 @@
 /HappyShop.Abstractions/bin/Release/netstandard2.0
 /HappyShop.SQLData/bin/Debug/netstandard2.0
 /HappyShop.SQLData/obj
+/HappyShop.Core/bin/Debug/netcoreapp3.1
+/HappyShop.Data/bin/Debug/netcoreapp3.1
+/HappyShop.Service/bin/Debug/netcoreapp3.1
+/HappyShop.SQLData/bin/Debug/netcoreapp3.1

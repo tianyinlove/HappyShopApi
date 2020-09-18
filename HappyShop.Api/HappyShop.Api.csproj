@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HappyShop.Data\HappyShop.Data.csproj" />
     <ProjectReference Include="..\HappyShop.Service\HappyShop.Service.csproj" />
+    <ProjectReference Include="..\HappyShop.SQLData\HappyShop.SQLData.csproj" />
   </ItemGroup>
 
   <ItemGroup>
