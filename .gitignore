@@ -27,3 +27,6 @@
 /HappyShop.Data/bin/Debug/netcoreapp3.1
 /HappyShop.Service/bin/Debug/netcoreapp3.1
 /HappyShop.SQLData/bin/Debug/netcoreapp3.1
+/HappyShop.Core/bin/Release/netcoreapp3.1
+/HappyShop.Service/bin/Release/netcoreapp3.1
+/HappyShop.SQLData/bin/Release/netcoreapp3.1

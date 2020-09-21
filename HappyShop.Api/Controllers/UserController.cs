@@ -7,15 +7,12 @@ using HappyShop.Comm;
 using HappyShop.Model;
 using HappyShop.Request;
 using HappyShop.Service;
-using log4net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Utility.Extensions;
-using Utility.NetLog;
 using Utility.Model;
 using Utility.NetCore;
-using Utility.Constants;
 using HappyShop.Domian;
 
 namespace HappyShop.Api.Controllers
