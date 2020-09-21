@@ -31,9 +31,14 @@ namespace HappyShop.Data
         /// <param name="optionsBuilder"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Data Source=\"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "HappyShop.db")}\"", sqliteOptionsBuilder =>
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data\\DB");
+            if (!Directory.Exists(path))
             {
-                sqliteOptionsBuilder.MigrationsAssembly("HappyShop.Data");
+                Directory.CreateDirectory(path);
+            }
+            optionsBuilder.UseSqlite($"Data Source=\"{Path.Combine(path, "HappyShop.db")}\"", sqliteOptionsBuilder =>
+            {
+                sqliteOptionsBuilder.MigrationsAssembly("HappyShop.SQLData");
             });
         }
 

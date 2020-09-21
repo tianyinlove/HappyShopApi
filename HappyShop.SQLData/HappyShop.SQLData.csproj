@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>HappyShop.Data</RootNamespace>
-    <AssemblyName>HappyShop.Data</AssemblyName>
+    <AssemblyName>HappyShop.SQLData</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +20,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HappyShop.Core\HappyShop.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

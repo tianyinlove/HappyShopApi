@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utility.NetLog;
 
 namespace HappyShop.Data
 {
@@ -31,6 +32,7 @@ namespace HappyShop.Data
         /// </summary>
         public void InitData()
         {
+            Logger.WriteLog(Utility.Constants.LogLevel.Trace, "初始化数据库");
             _shopSQLContext.EnsureMigrate();
         }
 

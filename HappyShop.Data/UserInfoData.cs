@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Utility.Constants;
+using Utility.NetLog;
 
 namespace HappyShop.Data
 {
@@ -35,6 +37,7 @@ namespace HappyShop.Data
         /// </summary>
         public void InitData()
         {
+            Logger.WriteLog(LogLevel.Trace, "初始化索引");
             _mongoContext.InitUserInfoIndexs();
         }
 

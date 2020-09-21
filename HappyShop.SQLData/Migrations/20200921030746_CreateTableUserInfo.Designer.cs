@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HappyShop.Data.Migrations
 {
     [DbContext(typeof(HappyShopSQLContext))]
-    [Migration("20200918023036_CreateTableUserInfo")]
+    [Migration("20200921030746_CreateTableUserInfo")]
     partial class CreateTableUserInfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
