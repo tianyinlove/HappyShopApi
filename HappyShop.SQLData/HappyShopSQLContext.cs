@@ -12,6 +12,24 @@ namespace HappyShop.Data
     /// </summary>
     internal class HappyShopSQLContext : DbContext
     {
+        static string _dbConnectionString;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public HappyShopSQLContext()
+        {
+            if (string.IsNullOrEmpty(_dbConnectionString))
+            {
+                var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data\\DB");
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+                _dbConnectionString = Path.Combine(filePath, "HappyShop.db");
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -31,14 +49,9 @@ namespace HappyShop.Data
         /// <param name="optionsBuilder"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data\\DB");
-            if (!Directory.Exists(path))
+            optionsBuilder.UseSqlite($"Data Source=\"{_dbConnectionString}\"", sqliteOptionsBuilder =>
             {
-                Directory.CreateDirectory(path);
-            }
-            optionsBuilder.UseSqlite($"Data Source=\"{Path.Combine(path, "HappyShop.db")}\"", sqliteOptionsBuilder =>
-            {
-                sqliteOptionsBuilder.MigrationsAssembly("HappyShop.SQLData");
+                sqliteOptionsBuilder.MigrationsAssembly("HappyShop.Data");
             });
         }
 
