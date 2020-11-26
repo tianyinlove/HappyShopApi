@@ -10,12 +10,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
-    <PackageReference Include="MongoDB.Driver" Version="2.11.2" />
-    <PackageReference Include="Utility.Net" Version="1.0.8" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
+    <PackageReference Include="Utility.Net" Version="1.0.13" />
     <PackageReference Include="Utility.NetCore" Version="1.0.9" />
     <PackageReference Include="Utility.NetLog" Version="1.0.1" />
   </ItemGroup>

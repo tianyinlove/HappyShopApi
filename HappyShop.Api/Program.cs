@@ -39,6 +39,7 @@ namespace HappyShop.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseUrls("http://*:5010");
                     webBuilder.UseStartup<Startup>();
                 });
     }

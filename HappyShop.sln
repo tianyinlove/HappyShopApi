@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.Abstractions", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.Api", "HappyShop.Api\HappyShop.Api.csproj", "{603463D8-9B47-4560-B60B-B4A22CBD684A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyShop.SQLData", "HappyShop.SQLData\HappyShop.SQLData.csproj", "{3538C43A-C19B-4677-8978-F6088A35E845}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.SQLData", "HappyShop.SQLData\HappyShop.SQLData.csproj", "{3538C43A-C19B-4677-8978-F6088A35E845}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
