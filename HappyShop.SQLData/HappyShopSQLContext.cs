@@ -21,7 +21,12 @@ namespace HappyShop.Data
         {
             if (string.IsNullOrEmpty(_dbConnectionString))
             {
-                var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data\\DB");
+                var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+                filePath = Path.Combine(filePath, "DB");
                 if (!Directory.Exists(filePath))
                 {
                     Directory.CreateDirectory(filePath);

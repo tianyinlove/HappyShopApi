@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Utility.NetCore;
+using Utility.NetLog;
 
 namespace HappyShop.Api.Controllers
 {
@@ -36,6 +37,7 @@ namespace HappyShop.Api.Controllers
         [HttpPost]
         public object Get()
         {
+            Logger.WriteLog(Utility.Constants.LogLevel.Info, "测试日志");
             return new ApiResult<string>("ok");
         }
     }
