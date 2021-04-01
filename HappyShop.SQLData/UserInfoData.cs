@@ -1,10 +1,12 @@
-﻿using HappyShop.Comm;
+﻿using Dapper;
+using HappyShop.Comm;
 using HappyShop.Data;
 using HappyShop.Domian;
 using HappyShop.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +36,23 @@ namespace HappyShop.Data
         {
             Logger.WriteLog(Utility.Constants.LogLevel.Trace, "初始化数据库");
             _shopSQLContext.EnsureMigrate();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountName"></param>
+        /// <returns></returns>
+        public async Task<UserInfoEntity> GetUserByAccountAsync(string accountName)
+        {
+            using (var connection = _shopSQLContext.GetSqlConnection())
+            {
+                var param = new DynamicParameters();
+                param.Add("@AccountName", accountName);
+                var result = (await connection.QueryAsync<UserInfoEntity>("select * from UserInfo where UnionId=@AccountName or OpenId=@AccountName or PhoneNumber=@AccountName", param, commandType: CommandType.Text))
+                    .FirstOrDefault();
+                return result;
+            }
         }
 
         /// <summary>

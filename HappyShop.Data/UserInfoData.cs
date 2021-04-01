@@ -46,6 +46,16 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
+        public async Task<UserInfoEntity> GetUserByAccountAsync(string accountName)
+        {
+            return await GetUserByAccount(accountName);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountName"></param>
+        /// <returns></returns>
         public async Task<UserInfoEntity> GetUserByAccount(string accountName)
         {
             var filter = Builders<UserInfoDocument>.Filter.Or(

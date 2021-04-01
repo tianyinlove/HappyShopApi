@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Text;
 
@@ -33,6 +34,19 @@ namespace HappyShop.Data
                 }
                 _dbConnectionString = Path.Combine(filePath, "HappyShop.db");
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public SqlConnection GetSqlConnection(string dbConnectionString = "")
+        {
+            if (string.IsNullOrEmpty(dbConnectionString))
+            {
+                dbConnectionString = _dbConnectionString;
+            }
+            return new SqlConnection(dbConnectionString);
         }
 
         /// <summary>

@@ -21,6 +21,13 @@ namespace HappyShop.Data
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
+        Task<UserInfoEntity> GetUserByAccountAsync(string accountName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountName"></param>
+        /// <returns></returns>
         Task<UserInfoEntity> GetUserByAccount(string accountName);
 
         /// <summary>
