@@ -14,6 +14,7 @@ using Utility.Extensions;
 using Utility.Model;
 using Utility.NetCore;
 using HappyShop.Domian;
+using Utility.NetLog;
 
 namespace HappyShop.Api.Controllers
 {
@@ -48,7 +49,7 @@ namespace HappyShop.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]WechatRequest request)
+        public async Task<IActionResult> Login([FromBody] WechatRequest request)
         {
             var result = await _userInfoService.LoginAsync(request);
             if (result != null && !string.IsNullOrEmpty(result.PhoneNumber))
@@ -64,7 +65,7 @@ namespace HappyShop.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> BindUser([FromBody]UserReuqest request)
+        public async Task<IActionResult> BindUser([FromBody] UserReuqest request)
         {
             var result = await _userInfoService.SaveUpdateAsync(request);
             if (result != null && !string.IsNullOrEmpty(result.PhoneNumber))
@@ -88,6 +89,18 @@ namespace HappyShop.Api.Controllers
         }
 
         #region 微信
+
+        /// <summary>
+        /// 被分享者首次授权
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public bool CheckSignature(int acountId = 2)
+        {
+            var query = _httpContext.HttpContext.Request.QueryString.Value;
+            Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"微信数据 {query}");
+            return true;
+        }
 
         /// <summary>
         /// 被分享者首次授权
