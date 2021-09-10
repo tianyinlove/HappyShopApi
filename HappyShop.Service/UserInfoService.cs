@@ -22,6 +22,7 @@ namespace HappyShop.Service
     {
         private IUserInfoData _userInfoData;
         private IOAuthService _oathService;
+        private IApiClient _apiClient;
         private AppConfig _config;
 
         /// <summary>
@@ -29,11 +30,67 @@ namespace HappyShop.Service
         /// </summary>
         public UserInfoService(IOptionsMonitor<AppConfig> options,
             IOAuthService oAuthService,
+            IApiClient apiClient,
             IUserInfoData userInfoData)
         {
             _userInfoData = userInfoData;
             _oathService = oAuthService;
+            _apiClient = apiClient;
             _config = options.CurrentValue;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public async Task<string> GetStockTradeByNameAsync(string name)
+        {
+            var result = "今日无交易";
+            try
+            {
+                var list = await _apiClient.GetStockTradeListByNameAsync(name);
+                if (list != null && list.Count > 0)
+                {
+                    result = "";
+                    list.ForEach(item =>
+                    {
+                        result += $"{item.TradeTime}\n{item.Busimsg}：{item.Secuname}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.Entrustamt}股)，撤单{item.Cancelamt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n原仓位：{item.Stkpospre}\n目标仓位：{item.Stkposdst}\n成交仓位：{item.DealPosition};\n\n";
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(LogLevel.Error, "读取好股交易数据异常", name, ex);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prodid"></param>
+        /// <returns></returns>
+        public async Task<string> GetStockMessageByIdAsync(int prodid)
+        {
+            var result = "当前空仓";
+            try
+            {
+                var list = await _apiClient.GetStockListByIdAsync(prodid);
+                if (list != null && list.Count > 0)
+                {
+                    result = "";
+                    list.ForEach(item =>
+                    {
+                        result += $"{item.SecuritiesName}({item.SecuritiesCode}),持仓：{item.SecuAmuntStr}股({item.SecuScaleStr}),成本：{item.DilucostPriceStr},盈亏：{item.GainLossScale};\n\n";
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(LogLevel.Error, "读取好股持仓数据异常", prodid, ex);
+            }
+            return result;
         }
 
         /// <summary>

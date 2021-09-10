@@ -15,6 +15,7 @@ using Utility.Model;
 using Utility.NetCore;
 using HappyShop.Domian;
 using Utility.NetLog;
+using System.IO;
 
 namespace HappyShop.Api.Controllers
 {
@@ -29,6 +30,7 @@ namespace HappyShop.Api.Controllers
         private readonly IUserInfoService _userInfoService;
         private readonly AppConfig _config;
         private readonly IOAuthService _oauthService;
+
         /// <summary>
         /// 
         /// </summary>

@@ -15,6 +15,20 @@ namespace HappyShop.Service
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Task<string> GetStockTradeByNameAsync(string name);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prodid"></param>
+        /// <returns></returns>
+        Task<string> GetStockMessageByIdAsync(int prodid);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         Task<UserInfo> LoginAsync(WechatRequest request);
