@@ -74,7 +74,7 @@ namespace HappyShop.Api.Controllers
                     }
                     else
                     {
-                        message = await _userInfoService.GetStockTradeByNameAsync(content);
+                        message = await _userInfoService.GetStockTradeByNameAsync("望星人1号");
                     }
                     string sRespData = $"<xml><ToUserName><![CDATA[{gatewayData.GetValue<string>("FromUserName")}]]></ToUserName><FromUserName><![CDATA[{sCorpID}]]></FromUserName><CreateTime>{gatewayData.GetValue<string>("CreateTime")}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[{message}]]></Content><MsgId>{gatewayData.GetValue<string>("MsgId")}</MsgId><AgentID>{gatewayData.GetValue<string>("AgentID")}</AgentID></xml>";
                     ret = wxcpt.EncryptMsg(sRespData, timestamp, nonce, ref result);

@@ -25,22 +25,5 @@ namespace HappyShop.Service
         /// <param name="name"></param>
         /// <returns></returns>
         Task<List<StockTradeInfo>> GetStockTradeListByNameAsync(string name);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="protocolId"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        Task<ApiData<T>> ProtoBufInvokeAsync<T>(string apiUrl, int? protocolId = null, object parameters = null);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="protocolId"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        Task<XResponse> ProtoBufInvokeAsync(string apiUrl, int? protocolId = null, object parameters = null);
     }
 }
