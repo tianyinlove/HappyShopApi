@@ -1,4 +1,6 @@
-﻿using HappyShop.Domian;
+﻿using HappyShop.Comm;
+using HappyShop.Domian;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,12 +19,16 @@ namespace HappyShop.Service
     class ApiClient : IApiClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly AppConfig _config;
+
         /// <summary>
         /// 
         /// </summary>
-        public ApiClient(IHttpClientFactory httpClientFactory)
+        public ApiClient(IOptionsMonitor<AppConfig> options,
+            IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _config = options.CurrentValue;
         }
 
         /// <summary>
@@ -35,7 +41,7 @@ namespace HappyShop.Service
             var result = new List<HoldRepositoryItem>();
             try
             {
-                var response = await ProtoBufInvokeAsync<PflQrySecuShareResponse>("https://emapp.emoney.cn/transfer/10.12.2.120:8556", 9300, new
+                var response = await ProtoBufInvokeAsync<PflQrySecuShareResponse>(_config.TradeUrl, 9300, new
                 {
                     token = "",
                     prodid = prodid,
@@ -105,7 +111,7 @@ namespace HappyShop.Service
             var result = new List<StockTradeInfo>();
             try
             {
-                var response = await ProtoBufInvokeAsync<StockQryEntrustResponse>("https://emapp.emoney.cn/transfer/10.12.2.120:8556", 9400, new
+                var response = await ProtoBufInvokeAsync<StockQryEntrustResponse>(_config.TradeUrl, 9400, new
                 {
                     token = "",
                     prodid = 0,

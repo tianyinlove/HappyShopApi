@@ -10,6 +10,11 @@ namespace HappyShop.Comm
     public class AppConfig
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public string TradeUrl { get; set; }
+
+        /// <summary>
         /// mongodb配置
         /// </summary>
         public MongodbConfig MongodbConfig { get; set; }
