@@ -3,5 +3,5 @@ WORKDIR /app
 #拷贝当前文件夹下的文件到容器中系统的工作空间
 COPY . /app
 #设置Docker容器端口
-EXPOSE 5002
+EXPOSE 5010
 ENTRYPOINT ["dotnet", "HappyShop.Api.dll"]
