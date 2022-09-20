@@ -53,12 +53,6 @@ namespace HappyShop.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var pathbase = Configuration.GetSection("pathbase").Value;
-            if (!string.IsNullOrWhiteSpace(pathbase) && pathbase.StartsWith('/'))
-            {
-                app.UsePathBase(pathbase);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
