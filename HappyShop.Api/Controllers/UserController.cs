@@ -28,7 +28,8 @@ namespace HappyShop.Api.Controllers
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUserInfoService _userInfoService;
-        private readonly AppConfig _config;
+        private readonly IOptionsMonitor<AppConfig> _options;
+
         private readonly IOAuthService _oauthService;
 
         /// <summary>
@@ -41,8 +42,25 @@ namespace HappyShop.Api.Controllers
         {
             _httpContext = httpContext;
             _userInfoService = userInfoService;
-            _config = options.CurrentValue;
+            _options = options;
             _oauthService = oauthService;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        AppConfig Appconfig
+        {
+            get { return _options.CurrentValue; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Index()
+        {
+            return new ApiResult<AppConfig>(Appconfig);
         }
 
         /// <summary>
@@ -112,7 +130,7 @@ namespace HappyShop.Api.Controllers
         public void WeChat(int acountId = 2)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
             //首次握手               
             string redirectUrl = $"{ wxConfig.RedirectUrl}{query}";
             _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
@@ -131,7 +149,7 @@ namespace HappyShop.Api.Controllers
             {
                 throw new ApiException(-1, "code不能为空");
             }
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
             var accessToken = await _oauthService.GetWeChatAccessTokenAsync(wxConfig, code);
             if (accessToken == null)
             {
