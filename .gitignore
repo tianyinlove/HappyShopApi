@@ -30,3 +30,5 @@
 /HappyShop.Core/bin/Release/netcoreapp3.1
 /HappyShop.Service/bin/Release/netcoreapp3.1
 /HappyShop.SQLData/bin/Release/netcoreapp3.1
+/.vs/HappyShop/v17
+/.vs/HappyShop/FileContentIndex
