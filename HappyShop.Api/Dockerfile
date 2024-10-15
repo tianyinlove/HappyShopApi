@@ -4,4 +4,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 COPY . /app
 EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["dotnet", "HappyShop.Api.dll"]
