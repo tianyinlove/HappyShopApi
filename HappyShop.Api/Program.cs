@@ -14,7 +14,7 @@ namespace HappyShop.Api
     public class Program
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args)
@@ -31,7 +31,7 @@ namespace HappyShop.Api
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -39,7 +39,7 @@ namespace HappyShop.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://*:5010");
+                    //webBuilder.UseUrls("http://*:5010");
                     webBuilder.UseStartup<Startup>();
                 });
     }
