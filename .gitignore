@@ -17,4 +17,6 @@
 
 /HappyShop.SQLData/bin
 /HappyShop.SQLData/obj
-/NoticeWorkerService/bin/Debug/net8.0
+/NoticeWorkerService/bin
+/NoticeWorkerService/obj
+/NoticeWorkerService/Properties
