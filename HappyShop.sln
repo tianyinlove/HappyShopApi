@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.Data", "HappyShop.Data\HappyShop.Data.csproj", "{824CD85D-ECB6-4271-98AD-2D2F44E19E32}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.Api", "HappyShop.Api\HappyShop.Api.csproj", "{603463D8-9B47-4560-B60B-B4A22CBD684A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyShop.SQLData", "HappyShop.SQLData\HappyShop.SQLData.csproj", "{3538C43A-C19B-4677-8978-F6088A35E845}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoticeWorkerService", "NoticeWorkerService\NoticeWorkerService.csproj", "{B8CF1392-9F09-4A0D-B951-27A22B88B31B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{3538C43A-C19B-4677-8978-F6088A35E845}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3538C43A-C19B-4677-8978-F6088A35E845}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3538C43A-C19B-4677-8978-F6088A35E845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8CF1392-9F09-4A0D-B951-27A22B88B31B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8CF1392-9F09-4A0D-B951-27A22B88B31B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8CF1392-9F09-4A0D-B951-27A22B88B31B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8CF1392-9F09-4A0D-B951-27A22B88B31B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
