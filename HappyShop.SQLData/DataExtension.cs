@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HappyShop.Service;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,19 +10,19 @@ using Utility.Extensions;
 namespace HappyShop.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class DataExtension
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddHappyShopData(this IServiceCollection services)
         {
-            var _assembly = Assembly.GetExecutingAssembly();
-            return services.AddAssembly(_assembly);
+            services.TryAddScoped<IUserInfoData, UserInfoData>();
+            return services;
         }
     }
 }

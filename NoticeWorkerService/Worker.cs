@@ -1,5 +1,5 @@
+using HappyShop.Service;
 using Microsoft.Extensions.Hosting;
-using NoticeWorkerService.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +11,14 @@ using Utility.NetLog;
 namespace NoticeWorkerService
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class Worker : BackgroundService
     {
         private readonly IStockMonitorService _stockMonitorService;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Worker(IStockMonitorService stockMonitorService)
         {
@@ -26,7 +26,7 @@ namespace NoticeWorkerService
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stoppingToken"></param>
         /// <returns></returns>
@@ -36,7 +36,7 @@ namespace NoticeWorkerService
             {
                 try
                 {
-                    await _stockMonitorService.SendMessage();
+                    await _stockMonitorService.SendMessageAsync();
                 }
                 catch (Exception ex)
                 {
@@ -47,7 +47,7 @@ namespace NoticeWorkerService
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
@@ -58,7 +58,7 @@ namespace NoticeWorkerService
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>

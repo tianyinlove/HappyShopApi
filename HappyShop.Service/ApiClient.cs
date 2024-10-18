@@ -15,15 +15,15 @@ using Utility.NetLog;
 namespace HappyShop.Service
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    class ApiClient : IApiClient
+    internal class ApiClient : IApiClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly AppConfig _config;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ApiClient(IOptionsMonitor<AppConfig> options,
             IHttpClientFactory httpClientFactory)
@@ -33,7 +33,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -55,12 +55,12 @@ namespace HappyShop.Service
                     stockcode = 0
                 }).ToJson());
 
-                if (response.Result.Code != 0)
+                if (response?.Result?.Code != 0)
                 {
                     Logger.WriteLog(Utility.Constants.LogLevel.Warning, "读取持仓信息业务接口异常", new { prodid, response });
                     throw new Exception("读取持仓信息业务接口异常");
                 }
-                if (response.Detail?.Secushare != null)
+                if (response?.Detail?.Secushare != null)
                 {
                     result = response.Detail?.Secushare.Select(a => new HoldRepositoryItem
                     {
@@ -102,7 +102,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -133,12 +133,12 @@ namespace HappyShop.Service
                     authorname = ""
                 }).ToJson());
 
-                if (response.Result.Code != 0)
+                if (response?.Result?.Code != 0)
                 {
                     Logger.WriteLog(Utility.Constants.LogLevel.Warning, "读取交易信息业务接口异常", new { name, response });
                     throw new Exception("读取交易信息业务接口异常");
                 }
-                if (response.Detail?.entrust != null)
+                if (response?.Detail?.entrust != null)
                 {
                     result = response.Detail?.entrust.Select(a => new StockTradeInfo
                     {

@@ -2,6 +2,7 @@
 using HappyShop.Documents;
 using HappyShop.Domian;
 using HappyShop.Entity;
+using HappyShop.Repositories;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -16,24 +17,22 @@ using Utility.NetLog;
 namespace HappyShop.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    class UserInfoData : IUserInfoData
+    internal class UserInfoData : IUserInfoData
     {
-        private HappyShopMongoContext _mongoContext;
-        private IMongoCollection<UserInfoDocument> _userInfo;
+        private IHappyShopMongoContext _mongoContext;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public UserInfoData(IOptionsMonitor<AppConfig> options)
+        public UserInfoData(IHappyShopMongoContext mongoContext)
         {
-            _mongoContext = new HappyShopMongoContext(options);
-            _userInfo = _mongoContext.Collection<UserInfoDocument>();
+            _mongoContext = mongoContext;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void InitData()
         {
@@ -42,7 +41,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
@@ -52,7 +51,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
@@ -63,23 +62,23 @@ namespace HappyShop.Data
                 Builders<UserInfoDocument>.Filter.Where(x => x.OpenId == accountName),
                 Builders<UserInfoDocument>.Filter.Regex(x => x.PhoneNumber, new BsonRegularExpression(new Regex(accountName, RegexOptions.IgnoreCase))));
 
-            var result = await _userInfo.Find(filter).FirstOrDefaultAsync();
+            var result = await _mongoContext.UserInfo.Find(filter).FirstOrDefaultAsync();
             return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<UserInfoEntity> GetUserById(string id)
         {
-            var result = await _userInfo.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var result = await _mongoContext.UserInfo.Find(x => x.Id == id).FirstOrDefaultAsync();
             return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -114,7 +113,7 @@ namespace HappyShop.Data
 
             var options = new FindOneAndUpdateOptions<UserInfoDocument> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
 
-            var result = await _userInfo.FindOneAndUpdateAsync(filter, update, options);
+            var result = await _mongoContext.UserInfo.FindOneAndUpdateAsync(filter, update, options);
             return result.Convert<UserInfoDocument, UserInfoEntity>();
         }
     }

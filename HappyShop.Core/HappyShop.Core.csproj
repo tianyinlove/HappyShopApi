@@ -10,15 +10,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="10.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-		<PackageReference Include="MongoDB.Driver" Version="2.11.4" />
-		<PackageReference Include="protobuf-net" Version="3.0.101" />
-		<PackageReference Include="Utility.Net" Version="1.0.15" />
-		<PackageReference Include="Utility.NetCore" Version="1.0.9" />
-		<PackageReference Include="Utility.NetLog" Version="1.0.1" />
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+		<PackageReference Include="protobuf-net" Version="3.2.30" />
+		<PackageReference Include="Utility.Net" Version="1.0.19" />
+		<PackageReference Include="Utility.NetCore" Version="1.0.10" />
+		<PackageReference Include="Utility.NetLocker" Version="1.0.0" />
+		<PackageReference Include="Utility.NetLog" Version="1.0.2" />
 	</ItemGroup>
 
 </Project>

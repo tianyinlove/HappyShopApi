@@ -1,5 +1,6 @@
 ﻿using HappyShop.Comm;
 using HappyShop.Documents;
+using HappyShop.Repositories;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
@@ -12,14 +13,19 @@ using System.Text.RegularExpressions;
 namespace HappyShop.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    internal class HappyShopMongoContext
+    internal class HappyShopMongoContext : IHappyShopMongoContext
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public IMongoDatabase Database { get; private set; }
+        protected MongoClient Client { get; private set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        protected IMongoDatabase Database { get; private set; }
 
         /// <summary>
         /// MongodbConfig
@@ -27,16 +33,26 @@ namespace HappyShop.Data
         /// <param name="configAccessor"></param>
         public HappyShopMongoContext(IOptionsMonitor<AppConfig> options)
         {
-            var client = new MongoClient(options.CurrentValue.MongodbConfig.ConnectionString);
-            Database = client.GetDatabase(options.CurrentValue.MongodbConfig.DatabaseName);
+            Client = new MongoClient(options.CurrentValue.MongodbConfig.ConnectionString);
+            Database = Client.GetDatabase(options.CurrentValue.MongodbConfig.DatabaseName);
         }
 
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        public IMongoCollection<UserInfoDocument> UserInfo => GetCollection<UserInfoDocument>("UserInfo");
+
+        /// <summary>
+        ///
+        /// </summary>
+        public IMongoCollection<MyFollowInfoDocument> MyFollowInfo => GetCollection<MyFollowInfoDocument>("MyFollowInfo");
+
+        /// <summary>
+        ///
         /// </summary>
         public void InitUserInfoIndexs()
         {
-            var collection = Collection<UserInfoDocument>();
+            var collection = GetCollection<UserInfoDocument>();
             var indexes = collection.Indexes.List().ToList();
             if (!indexes.Any(d => d.GetElement("name").Value.AsString == "PhoneNumber"))
             {
@@ -81,7 +97,7 @@ namespace HappyShop.Data
         /// 否则就取类名，忽略Entity结束名
         ///  </param>
         /// <returns></returns>
-        public IMongoCollection<TDocument> Collection<TDocument>(string collectionName = null)
+        public IMongoCollection<TDocument> GetCollection<TDocument>(string collectionName = null)
         {
             if (string.IsNullOrWhiteSpace(collectionName))
             {

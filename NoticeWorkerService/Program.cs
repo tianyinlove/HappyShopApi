@@ -1,7 +1,7 @@
+using HappyShop.Comm;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NoticeWorkerService.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,16 +9,18 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Utility.Extensions;
+using HappyShop.Data;
+using HappyShop.Service;
 
 namespace NoticeWorkerService
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args)
@@ -27,7 +29,7 @@ namespace NoticeWorkerService
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -42,10 +44,12 @@ namespace NoticeWorkerService
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.Configure<AppSettings>(hostContext.Configuration);
+                    services.Configure<AppConfig>(hostContext.Configuration);
                     services.AddProductService();
                     services.AddHttpClient();
                     services.AddMemoryCache();
+                    services.AddHappyShopService();
+                    services.AddHappyShopData();
                     services.AddHostedService<Worker>();
                 });
     }

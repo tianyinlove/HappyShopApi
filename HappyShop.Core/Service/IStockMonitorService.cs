@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NoticeWorkerService.Service
+namespace HappyShop.Service
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IStockMonitorService
     {
         /// <summary>
-        /// 
+        ///
+        /// </summary>
+        /// <returns></returns>
+        Task SendMessageAsync();
+
+        /// <summary>
+        ///
         /// </summary>
         /// <returns></returns>
         Task SendMessage();

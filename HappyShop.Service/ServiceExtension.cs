@@ -1,5 +1,6 @@
 ﻿using HappyShop.Comm;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +11,23 @@ using Utility.Extensions;
 namespace HappyShop.Service
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class ServiceExtension
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddHappyShopService(this IServiceCollection services)
         {
-            var _assembly = Assembly.GetExecutingAssembly();
-            return services.AddAssembly(_assembly);
+            services.TryAddScoped<IApiClient, ApiClient>();
+            services.TryAddScoped<IOAuthService, OAuthService>();
+            services.TryAddScoped<IStockMonitorService, StockMonitorService>();
+            services.TryAddScoped<IUserInfoService, UserInfoService>();
+            services.TryAddScoped<IWeChatService, WeChatService>();
+            return services;
         }
-
     }
 }
