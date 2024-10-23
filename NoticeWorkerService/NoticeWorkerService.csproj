@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<UserSecretsId>dotnet-NoticeWorkerService-0A1FC77D-F7BA-46DC-BC07-7592BCEA4986</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +12,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 		<PackageReference Include="Utility.Net" Version="1.0.19" />
 		<PackageReference Include="Utility.NetCore" Version="1.0.10" />
 		<PackageReference Include="Utility.NetLocker" Version="1.0.0" />
@@ -28,5 +30,9 @@
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="..\.dockerignore" Link="script\.dockerignore" />
 	</ItemGroup>
 </Project>

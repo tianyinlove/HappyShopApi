@@ -1,0 +1,18 @@
+1、进入目录
+cd /home/service/happyshop
+
+2、构建并运行Docker镜像
+docker build -f Dockerfile -t happyshopservice:202410232 .
+docker run -d --name happyshopservice happyshopservice:202410232
+
+3、将 your_service.service、mycron 和 script.sh 文件复制到容器中。可以使用以下命令
+docker cp happyshop.service happyshopservice:/etc/systemd/system/happyshop.service
+docker cp happyshopcron happyshopservice:/etc/cron.d/happyshopcron
+docker cp script.sh my-systemd-container:/home/service/happyshop/script.sh
+
+4、进入容器并启动 cron 和 systemd 服务
+docker exec -it happyshopservice /bin/bash
+# 在容器内执行以下命令
+systemctl daemon-reload
+systemctl enable happyshop.service
+service cron start

@@ -1,0 +1,6 @@
+﻿[Unit]
+Description=Run my script every 5 seconds
+
+[Service]
+Type=oneshot
+ExecStart=/home/service/happyshop/script.sh
