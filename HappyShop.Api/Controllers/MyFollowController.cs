@@ -28,14 +28,17 @@ namespace HappyShop.Api.Controllers
     {
         private readonly IMyFollowData _myFollowData;
         private readonly IApiClient _apiClient;
+        private readonly IStockMonitorService _stockMonitorService;
 
         /// <summary>
         ///
         /// </summary>
         public MyFollowController(IMyFollowData myFollowData,
+            IStockMonitorService stockMonitorService,
             IApiClient apiClient)
         {
             _myFollowData = myFollowData;
+            _stockMonitorService = stockMonitorService;
             this._apiClient = apiClient;
         }
 
@@ -100,6 +103,17 @@ namespace HappyShop.Api.Controllers
         {
             var result = await _myFollowData.SaveUpdate(userName, stockPool, stockCode, isFollow);
             return new ApiResult<bool>(result);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [HttpPost]
+        public async Task SendMessage()
+        {
+            await _stockMonitorService.SendMessageAsync();
         }
     }
 }

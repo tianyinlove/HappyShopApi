@@ -20,7 +20,7 @@ using System.IO;
 namespace HappyShop.Api.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [Route("[controller]/[action]")]
     [ApiController]
@@ -29,11 +29,10 @@ namespace HappyShop.Api.Controllers
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUserInfoService _userInfoService;
         private readonly IOptionsMonitor<AppConfig> _options;
-
         private readonly IOAuthService _oauthService;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public UserController(IHttpContextAccessor httpContext,
             IOptionsMonitor<AppConfig> options,
@@ -47,15 +46,15 @@ namespace HappyShop.Api.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        AppConfig Appconfig
+        private AppConfig Appconfig
         {
             get { return _options.CurrentValue; }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public IActionResult Index()
@@ -96,7 +95,7 @@ namespace HappyShop.Api.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acountId"></param>
         /// <param name="url"></param>
@@ -131,8 +130,8 @@ namespace HappyShop.Api.Controllers
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
-            //首次握手               
-            string redirectUrl = $"{ wxConfig.RedirectUrl}{query}";
+            //首次握手
+            string redirectUrl = $"{wxConfig.RedirectUrl}{query}";
             _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
         }
 

@@ -1,11 +1,15 @@
-using HappyShop.Service;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection.PortableExecutable;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Utility.Constants;
+using Utility.Model;
 using Utility.NetLog;
 
 namespace NoticeWorkerService
@@ -13,16 +17,30 @@ namespace NoticeWorkerService
     /// <summary>
     ///
     /// </summary>
+    public class AppConfig
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public string TradeUrl { get; set; }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
     public class Worker : BackgroundService
     {
-        private readonly IStockMonitorService _stockMonitorService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IOptionsMonitor<AppConfig> _options;
 
         /// <summary>
         ///
         /// </summary>
-        public Worker(IStockMonitorService stockMonitorService)
+        public Worker(IHttpClientFactory httpClientFactory,
+            IOptionsMonitor<AppConfig> options)
         {
-            _stockMonitorService = stockMonitorService;
+            _httpClientFactory = httpClientFactory;
+            _options = options;
         }
 
         /// <summary>
@@ -36,7 +54,13 @@ namespace NoticeWorkerService
             {
                 try
                 {
-                    await _stockMonitorService.SendMessageAsync();
+                    using (var request = new HttpRequestMessage(HttpMethod.Get, _options.CurrentValue.TradeUrl))
+                    {
+                        using (var response = await _httpClientFactory.CreateClient().SendAsync(request))
+                        {
+                            await response.Content.ReadAsStringAsync();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

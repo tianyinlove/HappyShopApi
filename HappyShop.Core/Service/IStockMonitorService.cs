@@ -16,11 +16,5 @@ namespace HappyShop.Service
         /// </summary>
         /// <returns></returns>
         Task SendMessageAsync();
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        Task SendMessage();
     }
 }

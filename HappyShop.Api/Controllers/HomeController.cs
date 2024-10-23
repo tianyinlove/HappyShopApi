@@ -9,6 +9,7 @@ using HappyShop.Model;
 using HappyShop.Request;
 using HappyShop.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Utility.NetCore;
@@ -85,27 +86,31 @@ namespace HappyShop.Api.Controllers
                         {
                             // 关注/取消关注@股票池名称@股票代码
                             message = "消息异常";
-                            if (contentList[0] == "1")
+                            if (contentList[0] == "关注")
                             {
+                                var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true);
+                                    saveResult = await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true);
+                                    saveResult = await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true);
                                 }
+                                message = saveResult ? "关注成功" : "关注失败";
                             }
-                            else if (contentList[0] == "0")
+                            else if (contentList[0] == "取消关注")
                             {
+                                var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false);
+                                    saveResult = await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false);
+                                    saveResult = await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false);
                                 }
+                                message = saveResult ? "取消关注成功" : "取消关注失败";
                             }
                         }
                         else
