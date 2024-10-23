@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HappyShop.Comm;
+using HappyShop.Data;
 using HappyShop.Model;
 using HappyShop.Request;
 using HappyShop.Service;
@@ -20,16 +21,20 @@ namespace HappyShop.Api.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IUserInfoService _userInfoService;
+        private readonly IMyFollowData _myFollowData;
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public HomeController(IUserInfoService userInfoService)
+        public HomeController(IUserInfoService userInfoService,
+            IMyFollowData myFollowData)
         {
             _userInfoService = userInfoService;
+            _myFollowData = myFollowData;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -74,7 +79,39 @@ namespace HappyShop.Api.Controllers
                     }
                     else
                     {
-                        message = await _userInfoService.GetStockTradeByNameAsync(content);
+                        string[] flags = new string[] { "|", ":", "_", "@", "$", "#" };
+                        var contentList = content.Split(flags, StringSplitOptions.RemoveEmptyEntries);
+                        if (contentList != null && contentList.Length > 1)
+                        {
+                            // 关注/取消关注@股票池名称@股票代码
+                            message = "消息异常";
+                            if (contentList[0] == "1")
+                            {
+                                if (contentList.Length == 2)
+                                {
+                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true);
+                                }
+                                if (contentList.Length > 2)
+                                {
+                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true);
+                                }
+                            }
+                            else if (contentList[0] == "0")
+                            {
+                                if (contentList.Length == 2)
+                                {
+                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false);
+                                }
+                                if (contentList.Length > 2)
+                                {
+                                    await _myFollowData.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            message = await _userInfoService.GetStockTradeByNameAsync(content);
+                        }
                     }
                     string sRespData = $"<xml><ToUserName><![CDATA[{gatewayData.GetValue<string>("FromUserName")}]]></ToUserName><FromUserName><![CDATA[{sCorpID}]]></FromUserName><CreateTime>{gatewayData.GetValue<string>("CreateTime")}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[{message}]]></Content><MsgId>{gatewayData.GetValue<string>("MsgId")}</MsgId><AgentID>{gatewayData.GetValue<string>("AgentID")}</AgentID></xml>";
                     ret = wxcpt.EncryptMsg(sRespData, timestamp, nonce, ref result);
