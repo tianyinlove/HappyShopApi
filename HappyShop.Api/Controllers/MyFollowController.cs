@@ -111,9 +111,10 @@ namespace HappyShop.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [HttpPost]
-        public async Task SendMessage()
+        public async Task<IActionResult> SendMessage()
         {
             await _stockMonitorService.SendMessageAsync();
+            return new ApiResult<bool>(true);
         }
     }
 }
