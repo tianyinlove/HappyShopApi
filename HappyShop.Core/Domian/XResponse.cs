@@ -31,39 +31,39 @@ namespace HappyShop.Domian
     public class XResult
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [ProtoMember(1)]
         public int Code { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [ProtoMember(2)]
         public string Msg { get; set; }
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [ProtoContract]
     public sealed class ProtoAny
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [ProtoMember(1, Name = "type_url")]
         public string TypeUrl { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [ProtoMember(2, Name = "value")]
         public byte[] Value { get; set; }
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class StockTradeInfo
     {

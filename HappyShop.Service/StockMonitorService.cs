@@ -1,6 +1,8 @@
 ﻿using HappyShop.Comm;
 using HappyShop.Data;
 using HappyShop.Domian;
+using HappyShop.Model;
+using HappyShop.Request;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System;
@@ -86,7 +88,7 @@ namespace HappyShop.Service
                         {
                             foreach (var item in list)
                             {
-                                var message = $"{item.TradeTime}\n{item.Busimsg}：{item.Secuname}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.Entrustamt}股)，撤单{item.Cancelamt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n原仓位：{item.Stkpospre}\n目标仓位：{item.Stkposdst}\n成交仓位：{item.DealPosition};\n\n";
+                                var message = $"{item.TradeTime}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
                                 var toUsers = userData.Where(x => x.StockPool == poolName || x.StockCode == item.StockCode).Select(x => x.UserName).Distinct().ToList();
                                 if (toUsers != null && toUsers.Count > 0)
                                 {
@@ -194,7 +196,7 @@ namespace HappyShop.Service
                     {
                         list.ForEach(item =>
                         {
-                            result += $"{item.TradeTime}\n{item.Busimsg}：{item.Secuname}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.Entrustamt}股)，撤单{item.Cancelamt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n原仓位：{item.Stkpospre}\n目标仓位：{item.Stkposdst}\n成交仓位：{item.DealPosition};\n\n";
+                            result += $"{item.TradeTime}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
                         });
                     }
                     time = data.Max(x => x.TradeTime);
@@ -213,33 +215,40 @@ namespace HappyShop.Service
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private async Task<List<StockTradeInfo>> GetStockTradeListByNameAsync(string name)
+        private async Task<List<RealTimeTradeItem>> GetStockTradeListByNameAsync(string name)
         {
-            var result = await _apiClient.GetStockTradeListByNameAsync(name);
+            var data = await _apiClient.GetListPage(new JinNangBackendPageRequest { JinNangName = name });
+            if (data == null || data.List == null || data.List.Count == 0)
+            {
+                return new List<RealTimeTradeItem>();
+            }
+            var result = await _apiClient.GetTradeList(new RealTimeTradeRequest { JinNangId = data.List[0].JinNangId, PageSize = 200 });
             if (result != null && result.Count > 0)
             {
                 var cacheKey = $"stocktrade:data:{name.Md5()}";
-                var oldData = _memoryCache.Get<List<StockTradeInfo>>(cacheKey) ?? new List<StockTradeInfo>();
+                var oldData = _memoryCache.Get<List<RealTimeTradeItem>>(cacheKey) ?? new List<RealTimeTradeItem>();
                 if (oldData.Count > 0)
                 {
                     result = result.Where(x =>
                         !oldData.Exists(o =>
-                        o.Busimsg == x.Busimsg &&
-                        o.Secuname == x.Secuname &&
+                        o.TradeType == x.TradeType &&
+                        o.TradeTime == x.TradeTime &&
+                        o.SecuName == x.SecuName &&
                         o.StockCode == x.StockCode &&
-                        o.Cancelamt == x.Cancelamt &&
+                        o.CancleAmt == x.CancleAmt &&
                         o.DealAmount == x.DealAmount &&
                         o.DealPosition == x.DealPosition &&
                         o.DealPrice == x.DealPrice &&
-                        o.Entrustamt == x.Entrustamt &&
-                        o.EntrustPrice == x.EntrustPrice &&
-                        o.Stkposdst == x.Stkposdst &&
-                        o.Stkpospre == x.Stkpospre))
-                        .ToList() ?? new List<StockTradeInfo>();
+                        o.DealNumber == x.DealNumber &&
+                        o.DealTime == x.DealTime &&
+                        o.EntrustTime == x.EntrustTime &&
+                        o.EntrustAmt == x.EntrustAmt &&
+                        o.EntrustPrice == x.EntrustPrice))
+                        .ToList() ?? new List<RealTimeTradeItem>();
                 }
 
                 oldData.AddRange(result);
-                _memoryCache.Set<List<StockTradeInfo>>(cacheKey, oldData, TimeSpan.FromMinutes(10));
+                _memoryCache.Set(cacheKey, oldData, TimeSpan.FromMinutes(10));
             }
             return result;
         }

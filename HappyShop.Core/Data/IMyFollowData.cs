@@ -15,9 +15,9 @@ namespace HappyShop.Data
         /// <summary>
         ///
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="userName"></param>
         /// <returns></returns>
-        Task<List<MyFollowInfoDocument>> GetMyFollows(string userId);
+        Task<List<MyFollowInfoDocument>> GetMyFollows(string userName);
 
         /// <summary>
         ///

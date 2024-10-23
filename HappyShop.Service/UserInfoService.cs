@@ -12,13 +12,16 @@ using Utility.Model;
 using Utility.Constants;
 using HappyShop.Entity;
 using HappyShop.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using HappyShop.Domian;
+using System.Collections.Generic;
 
 namespace HappyShop.Service
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    class UserInfoService : IUserInfoService
+    internal class UserInfoService : IUserInfoService
     {
         private IUserInfoData _userInfoData;
         private IOAuthService _oathService;
@@ -26,7 +29,7 @@ namespace HappyShop.Service
         private AppConfig _config;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public UserInfoService(IOptionsMonitor<AppConfig> options,
             IOAuthService oAuthService,
@@ -40,7 +43,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -49,13 +52,18 @@ namespace HappyShop.Service
             var result = "今日无交易";
             try
             {
-                var list = await _apiClient.GetStockTradeListByNameAsync(name);
+                var data = await _apiClient.GetListPage(new JinNangBackendPageRequest { JinNangName = name });
+                if (data == null || data.List == null || data.List.Count == 0)
+                {
+                    return result;
+                }
+                var list = await _apiClient.GetTradeList(new RealTimeTradeRequest { JinNangId = data.List[0].JinNangId, PageSize = 200 });
                 if (list != null && list.Count > 0)
                 {
                     result = "";
                     list.ForEach(item =>
                     {
-                        result += $"{item.TradeTime}\n{item.Busimsg}：{item.Secuname}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.Entrustamt}股)，撤单{item.Cancelamt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n原仓位：{item.Stkpospre}\n目标仓位：{item.Stkposdst}\n成交仓位：{item.DealPosition};\n\n";
+                        result += $"{item.TradeTime}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPrice}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPrice}元({item.DealAmount}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
                     });
                 }
             }
@@ -67,7 +75,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="prodid"></param>
         /// <returns></returns>
@@ -76,7 +84,7 @@ namespace HappyShop.Service
             var result = "当前空仓";
             try
             {
-                var list = await _apiClient.GetStockListByIdAsync(prodid);
+                var list = await _apiClient.GetHoldList(new JinNangHoldRepositoryRequest { JinNangId = prodid, PageSize = 200 });
                 if (list != null && list.Count > 0)
                 {
                     result = "";
@@ -94,7 +102,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -225,7 +233,7 @@ namespace HappyShop.Service
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acountId"></param>
         /// <param name="url"></param>

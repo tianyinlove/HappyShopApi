@@ -3,12 +3,18 @@ using HappyShop.Data;
 using HappyShop.Documents;
 using HappyShop.Domian;
 using HappyShop.Model;
+using HappyShop.Request;
+using HappyShop.Response;
 using HappyShop.Service;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
+using Utility.Model.Page;
 using Utility.NetCore;
 
 namespace HappyShop.Api.Controllers
@@ -34,33 +40,50 @@ namespace HappyShop.Api.Controllers
         }
 
         /// <summary>
-        ///当前持仓数据
+        /// 查询列表
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<List<HoldRepositoryItem>> GetStockListById(int prodid)
+        [HttpPost]
+        public async Task<IActionResult> GetListPage([FromBody] JinNangBackendPageRequest request)
         {
-            return await _apiClient.GetStockListByIdAsync(prodid);
+            var result = await _apiClient.GetListPage(request);
+            return new ApiResult<IndexPageResponse<JinNangListItem>>(result);
         }
 
         /// <summary>
-        ///当日交易记录
+        /// 获取交易动态
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<List<StockTradeInfo>> GetStockTradeListByName(string name)
+        [HttpPost]
+        public async Task<IActionResult> GetTradeList([FromBody] RealTimeTradeRequest request)
         {
-            return await _apiClient.GetStockTradeListByNameAsync(name);
+            var result = await _apiClient.GetTradeList(request);
+            return new ApiResult<List<RealTimeTradeItem>>(result);
+        }
+
+        /// <summary>
+        /// 获取持仓明细
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> GetHoldList([FromBody] JinNangHoldRepositoryRequest request)
+        {
+            var result = await _apiClient.GetHoldList(request);
+            return new ApiResult<List<HoldRepositoryItem>>(result);
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="userName"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(string uid)
+        [HttpGet]
+        public async Task<IActionResult> Index(string userName)
         {
-            var result = await _myFollowData.GetMyFollows(uid);
+            var result = await _myFollowData.GetMyFollows(userName);
             return new ApiResult<List<MyFollowInfoDocument>>(result);
         }
 
@@ -72,6 +95,7 @@ namespace HappyShop.Api.Controllers
         /// <param name="stockCode">股票代码</param>
         /// <param name="isFollow">是否关注</param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> Follw(string userName, string stockPool, string stockCode = "", bool isFollow = true)
         {
             var result = await _myFollowData.SaveUpdate(userName, stockPool, stockCode, isFollow);
