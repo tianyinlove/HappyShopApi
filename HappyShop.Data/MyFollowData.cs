@@ -30,13 +30,15 @@ namespace HappyShop.Data
         /// <summary>
         ///
         /// </summary>
-        public async Task<List<MyFollowInfoDocument>> GetMyFollows(string userName)
+        /// <param name="userId">用户在企业内的UserID</param>
+        /// <returns></returns>
+        public async Task<List<MyFollowInfoDocument>> GetMyFollows(string userId)
         {
             var filters = new List<FilterDefinition<MyFollowInfoDocument>>();
             filters.Add(Builders<MyFollowInfoDocument>.Filter.Where(x => x.IsFollow == true));
-            if (!string.IsNullOrEmpty(userName))
+            if (!string.IsNullOrEmpty(userId))
             {
-                filters.Add(Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userName));
+                filters.Add(Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userId));
             }
             return await _mongoContext.MyFollowInfo.Find(Builders<MyFollowInfoDocument>.Filter.And(filters)).ToListAsync();
         }
@@ -44,29 +46,33 @@ namespace HappyShop.Data
         /// <summary>
         ///
         /// </summary>
-        /// <param name="userName">用户名</param>
+        /// <param name="userId">用户在企业内的UserID</param>
         /// <param name="stockPool">股票池名</param>
         /// <param name="stockCode">股票代码</param>
         /// <param name="isFollow">是否关注</param>
         /// <returns></returns>
-        public async Task<bool> SaveUpdate(string userName, string stockPool, string stockCode, bool isFollow)
+        public async Task<bool> SaveUpdate(string userId, string stockPool, string stockCode, bool isFollow)
         {
             FilterDefinition<MyFollowInfoDocument> filter;
-            if (string.IsNullOrEmpty(stockCode))
+            if (!string.IsNullOrEmpty(stockPool) && string.IsNullOrEmpty(stockCode))
             {
-                filter = Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userName && x.StockPool == stockPool && string.IsNullOrEmpty(x.StockCode));
+                filter = Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userId && x.StockPool == stockPool && string.IsNullOrEmpty(x.StockCode));
+            }
+            else if (string.IsNullOrEmpty(stockPool) && !string.IsNullOrEmpty(stockCode))
+            {
+                filter = Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userId && string.IsNullOrEmpty(x.StockPool) && x.StockCode == stockCode);
             }
             else
             {
-                filter = Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userName && x.StockPool == stockPool && x.StockCode == stockCode);
+                filter = Builders<MyFollowInfoDocument>.Filter.Where(x => x.UserName == userId && x.StockPool == stockPool && x.StockCode == stockCode);
             }
 
             var update = Builders<MyFollowInfoDocument>.Update
                     .SetOnInsert(d => d.Id, Guid.NewGuid().ToString())
-                    .SetOnInsert(d => d.UserName, userName)
-                    .SetOnInsert(d => d.StockPool, stockPool)
-                    .SetOnInsert(d => d.StockCode, stockCode)
+                    .SetOnInsert(d => d.UserName, userId)
                     .SetOnInsert(d => d.CreateTime, DateTime.Now)
+                    .Set(d => d.StockPool, stockPool)
+                    .Set(d => d.StockCode, stockCode)
                     .Set(d => d.IsFollow, isFollow)
                     .Set(d => d.UpdateTime, DateTime.Now);
 

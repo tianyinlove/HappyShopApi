@@ -30,6 +30,7 @@ namespace HappyShop.Api.Controllers
         private readonly IUserInfoService _userInfoService;
         private readonly IOptionsMonitor<AppConfig> _options;
         private readonly IOAuthService _oauthService;
+        private readonly IWeChatService _weChatService;
 
         /// <summary>
         ///
@@ -37,12 +38,14 @@ namespace HappyShop.Api.Controllers
         public UserController(IHttpContextAccessor httpContext,
             IOptionsMonitor<AppConfig> options,
             IOAuthService oauthService,
+            IWeChatService weChatService,
             IUserInfoService userInfoService)
         {
             _httpContext = httpContext;
             _userInfoService = userInfoService;
             _options = options;
             _oauthService = oauthService;
+            this._weChatService = weChatService;
         }
 
         /// <summary>
@@ -160,5 +163,25 @@ namespace HappyShop.Api.Controllers
         }
 
         #endregion 微信
+
+        #region 企业微信
+
+        /// <summary>
+        /// 企业微信登录授权
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> LoginQYWeChat(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+            {
+                throw new ApiException(-1, "code不能为空");
+            }
+            var result = await _weChatService.LoginAsync(code);
+            return new ApiResult<QYWechatLoginUser>(result);
+        }
+
+        #endregion 企业微信
     }
 }

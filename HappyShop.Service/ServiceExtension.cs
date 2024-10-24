@@ -27,6 +27,7 @@ namespace HappyShop.Service
             services.TryAddScoped<IStockMonitorService, StockMonitorService>();
             services.TryAddScoped<IUserInfoService, UserInfoService>();
             services.TryAddScoped<IWeChatService, WeChatService>();
+            services.TryAddScoped<IMyFollowService, MyFollowService>();
             return services;
         }
     }

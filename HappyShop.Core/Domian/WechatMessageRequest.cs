@@ -8,18 +8,8 @@ namespace HappyShop.Domian
     /// <summary>
     /// 微信返回信息
     /// </summary>
-    public class WechatMessageResponse
+    public class WechatMessageResponse : QYWechatResponse
     {
-        /// <summary>
-        /// 错误码(0成功)
-        /// </summary>
-        public int ErrCode { get; set; }
-
-        /// <summary>
-        /// 返回消息
-        /// </summary>
-        public string ErrMsg { get; set; }
-
         /// <summary>
         /// Token
         /// </summary>

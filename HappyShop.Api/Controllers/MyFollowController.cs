@@ -26,18 +26,18 @@ namespace HappyShop.Api.Controllers
     [ApiController]
     public class MyFollowController : ControllerBase
     {
-        private readonly IMyFollowData _myFollowData;
+        private readonly IMyFollowService _myFollowService;
         private readonly IApiClient _apiClient;
         private readonly IStockMonitorService _stockMonitorService;
 
         /// <summary>
         ///
         /// </summary>
-        public MyFollowController(IMyFollowData myFollowData,
+        public MyFollowController(IMyFollowService myFollowService,
             IStockMonitorService stockMonitorService,
             IApiClient apiClient)
         {
-            _myFollowData = myFollowData;
+            _myFollowService = myFollowService;
             _stockMonitorService = stockMonitorService;
             this._apiClient = apiClient;
         }
@@ -81,27 +81,27 @@ namespace HappyShop.Api.Controllers
         /// <summary>
         ///
         /// </summary>
-        /// <param name="userName"></param>
+        /// <param name="userId">用户在企业内的UserID</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string userName)
+        public async Task<IActionResult> GetMyFollows([FromQuery] string userId)
         {
-            var result = await _myFollowData.GetMyFollows(userName);
+            var result = await _myFollowService.GetMyFollows(userId);
             return new ApiResult<List<MyFollowInfoDocument>>(result);
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="userName">用户名</param>
+        /// <param name="userId">用户在企业内的UserID</param>
         /// <param name="stockPool">股票池名</param>
         /// <param name="stockCode">股票代码</param>
         /// <param name="isFollow">是否关注</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Follw(string userName, string stockPool, string stockCode = "", bool isFollow = true)
+        public async Task<IActionResult> Follw([FromQuery] string userId, string stockPool = "", string stockCode = "", bool isFollow = true)
         {
-            var result = await _myFollowData.SaveUpdate(userName, stockPool, stockCode, isFollow);
+            var result = await _myFollowService.SaveUpdate(userId, stockPool, stockCode, isFollow);
             return new ApiResult<bool>(result);
         }
 

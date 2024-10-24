@@ -21,7 +21,9 @@ namespace HappyShop.Service
         private IHttpClientFactory _httpClientFactory;
         private IMemoryCache _memoryCache;
         private string getTokenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken";
+        private string loginUrl = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session";
         private string sendUrl = "https://qyapi.weixin.qq.com/cgi-bin/message/send";
+        private string userUrl = "https://qyapi.weixin.qq.com/cgi-bin/user/get";
         private int _agentId = 1000002;
         private string _corpId = "ww1c5ca8f9af6164f4";
         private string _corpSecret = "0KpZS4ri3HuQOeiu0niga_peKXBp1--aTrviaTT8Z54";
@@ -42,7 +44,7 @@ namespace HappyShop.Service
         /// <returns></returns>
         private async Task<string> GetToken()
         {
-            string cacheKey = "Emapp:AlertNotice:Token";
+            string cacheKey = "HappyShop:WeChat:Token";
             var result = _memoryCache.Get<string>(cacheKey);
             if (string.IsNullOrEmpty(result))
             {
@@ -65,11 +67,72 @@ namespace HappyShop.Service
         }
 
         /// <summary>
+        /// 企业微信登录
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<QYWechatLoginUser> LoginAsync(string code)
+        {
+            string cacheKey = $"HappyShop:WeChat:Login:{code}";
+            var result = _memoryCache.Get<QYWechatLoginUser>(cacheKey);
+            if (result == null)
+            {
+                var token = await GetToken();
+                var apiUrl = $"{loginUrl}?access_token={token}&js_code={code}&grant_type=authorization_code";
+                var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(data))
+                {
+                    var responseData = data.FromJson<QYWechatLoginUser>();
+                    if (responseData.ErrCode != 0)
+                    {
+                        throw new Exception(responseData.ErrMsg);
+                    }
+                    result = responseData;
+                    _memoryCache.Set(cacheKey, result, TimeSpan.FromMinutes(10));
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="userId">用户在企业内的UserID</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<QYWechatUserInfo> GetUserInfoAsync(string userId)
+        {
+            string cacheKey = $"HappyShop:WeChat:UserInfo:{userId}";
+            var result = _memoryCache.Get<QYWechatUserInfo>(cacheKey);
+            if (result == null)
+            {
+                var token = await GetToken();
+                var apiUrl = $"{userUrl}?access_token={token}&userid={userId}";
+                var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(data))
+                {
+                    var responseData = data.FromJson<QYWechatUserInfo>();
+                    if (responseData.ErrCode != 0)
+                    {
+                        throw new Exception(responseData.ErrMsg);
+                    }
+                    result = responseData;
+                    _memoryCache.Set(cacheKey, result, TimeSpan.FromMinutes(10));
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 消息通知
         /// </summary>
         /// <param name="request">通知对象</param>
         /// <returns></returns>
-        public async Task<bool> Notice(WechatMessageRequest request)
+        public async Task<bool> NoticeAsync(WechatMessageRequest request)
         {
             if (string.IsNullOrEmpty(request.ToUser) && string.IsNullOrEmpty(request.ToTag) && string.IsNullOrEmpty(request.ToParty))
             {

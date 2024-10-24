@@ -53,7 +53,7 @@ namespace HappyShop.Service
         /// <returns></returns>
         public async Task SendMessageAsync()
         {
-            Logger.WriteLog(LogLevel.Info, "开始执行服务", _appSettings);
+            Logger.WriteLog(LogLevel.Info, "开始执行服务");
 
             var w = DateTime.Now.DayOfWeek;
             var h = DateTime.Now.Hour;
@@ -89,7 +89,10 @@ namespace HappyShop.Service
                             foreach (var item in list)
                             {
                                 var message = $"{item.TradeTime}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPriceStr}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPriceStr}元({item.DealAmountStr}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
-                                var toUsers = userData.Where(x => x.StockPool == poolName || x.StockCode == item.StockCode).Select(x => x.UserName).Distinct().ToList();
+                                var toUsers = userData.Where(x => (x.StockPool == poolName && string.IsNullOrEmpty(x.StockCode)) || (x.StockPool == poolName && x.StockCode == item.StockCode) || (string.IsNullOrEmpty(x.StockPool) && x.StockCode == item.StockCode))
+                                    .Select(x => x.UserName)
+                                    .Distinct()
+                                    .ToList();
                                 if (toUsers != null && toUsers.Count > 0)
                                 {
                                     //每次读取1000条
@@ -106,7 +109,7 @@ namespace HappyShop.Service
                                                 Text = new NoticeText { Content = $"{poolName}\n{message}" }
                                             };
 
-                                            await _weChatService.Notice(request);
+                                            await _weChatService.NoticeAsync(request);
                                         }
                                     }
                                 }
