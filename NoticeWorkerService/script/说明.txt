@@ -1,18 +1,59 @@
-1、进入目录
-cd /home/service/happyshop
+要在 Debian 系统中每秒自动调用 HTTP 接口，可以使用以下方法：
 
-2、构建并运行Docker镜像
-docker build -f Dockerfile -t happyshopservice:202410232 .
-docker run -d --name happyshopservice happyshopservice:202410232
+1. **编写脚本**：编写一个 Bash 脚本来调用 HTTP 接口。例如，创建一个名为 `call_http.sh` 的文件并添加以下内容：
+   ```bash
+   #!/bin/bash
+   while true; do
+       curl -X GET "https://example.com/api"
+       sleep 1
+   done
+   ```
+   请将 `https://example.com/api` 替换为实际的 HTTP 接口 URL。
 
-3、将 your_service.service、mycron 和 script.sh 文件复制到容器中。可以使用以下命令
-docker cp happyshop.service happyshopservice:/etc/systemd/system/happyshop.service
-docker cp happyshopcron happyshopservice:/etc/cron.d/happyshopcron
-docker cp script.sh my-systemd-container:/home/service/happyshop/script.sh
+2. **使脚本可执行**：保存脚本后，使用以下命令使其可执行：
+   ```bash
+   chmod +x call_http.sh
+   ```
 
-4、进入容器并启动 cron 和 systemd 服务
-docker exec -it happyshopservice /bin/bash
-# 在容器内执行以下命令
-systemctl daemon-reload
-systemctl enable happyshop.service
-service cron start
+3. **使用 Cron 作业**：虽然 Cron 通常用于按分钟调度任务，但你可以通过在脚本中实现循环来实现每秒调用。不过，Cron 的最小时间间隔是一分钟，所以需要通过其他方式来实现每秒调用。
+
+4. **使用 systemd 定时器**：另一种方法是使用 systemd 定时器。首先，创建一个服务单元文件，例如 `/etc/systemd/system/call_http.service`，并添加以下内容：
+   ```ini
+   [Unit]
+   Description=Call HTTP API every second
+
+   [Service]
+   ExecStart=/path/to/call_http.sh
+   Restart=always
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   然后，创建一个定时器单元文件，例如 `/etc/systemd/system/call_http.timer`，并添加以下内容：
+   ```ini
+   [Unit]
+   Description=Run call_http.service every second
+
+   [Timer]
+   OnBootSec=1
+   OnUnitActiveSec=1
+   Persistent=true
+
+   [Install]
+   WantedBy=timers.target
+   ```
+
+   最后，启用并启动定时器和服务：
+   ```bash
+   sudo systemctl enable call_http.service
+   sudo systemctl start call_http.timer
+   ```
+
+5. **直接运行脚本**：如果不需要后台运行或定时功能，可以直接在终端中运行脚本：
+   ```bash
+   ./call_http.sh
+   ```
+   这将每秒钟调用一次指定的 HTTP 接口，直到你手动停止它（例如，使用 `Ctrl+C`）。
+
+总之，以上方法可以帮助你在 Debian 系统中每秒自动调用 HTTP 接口。选择最适合你需求的方法即可。

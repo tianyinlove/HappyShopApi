@@ -1,1 +1,0 @@
-﻿*/5 * * * * root systemctl start happyshop.service >> /var/log/systemd.log 2>&1

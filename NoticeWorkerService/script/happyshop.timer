@@ -1,0 +1,10 @@
+﻿[Unit]
+Description=Run happyshop.service every second
+
+[Timer]
+OnBootSec=1
+OnUnitActiveSec=1
+Persistent=true
+
+[Install]
+WantedBy=timers.target

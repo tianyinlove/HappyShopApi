@@ -1,6 +1,9 @@
 ﻿[Unit]
-Description=Run my script every 5 seconds
+Description=Run happyshop script every seconds
 
 [Service]
-Type=oneshot
 ExecStart=/home/service/happyshop/script.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
