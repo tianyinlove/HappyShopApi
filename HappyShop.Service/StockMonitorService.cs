@@ -2,6 +2,7 @@
 using HappyShop.Data;
 using HappyShop.Domian;
 using HappyShop.Model;
+using HappyShop.Repositories;
 using HappyShop.Request;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using Utility.Constants;
 using Utility.Extensions;
 using Utility.NetLog;
+using Utility.Redis;
 
 namespace HappyShop.Service
 {
@@ -24,6 +26,7 @@ namespace HappyShop.Service
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _memoryCache;
+        private readonly IMyRedisClient _redisClient;
         private readonly IWeChatService _weChatService;
         private readonly AppConfig _appSettings;
         private readonly IApiClient _apiClient;
@@ -33,16 +36,18 @@ namespace HappyShop.Service
         ///
         /// </summary>
         public StockMonitorService(IMemoryCache memoryCache,
+            IMyRedisClient redisClient,
             IWeChatService weChatService,
-            IOptions<AppConfig> options,
+            IOptionsMonitor<AppConfig> options,
             IApiClient apiClient,
             IMyFollowData myFollowData,
             IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
+            this._redisClient = redisClient;
             _weChatService = weChatService;
-            _appSettings = options.Value;
+            _appSettings = options.CurrentValue;
             _apiClient = apiClient;
             this._myFollowData = myFollowData;
         }
@@ -78,7 +83,7 @@ namespace HappyShop.Service
                     if (stockData != null && stockData.Count > 0)
                     {
                         var cacheKey = $"stocktrade:time:{poolName.Md5()}";
-                        var time = _memoryCache.Get<DateTime>(cacheKey);
+                        var time = _redisClient.Get<DateTime>(cacheKey);
                         if (time < DateTime.Today)
                         {
                             time = DateTime.Today;
@@ -116,7 +121,7 @@ namespace HappyShop.Service
                             }
                         }
                         time = stockData.Max(x => x.TradeTime);
-                        _memoryCache.Set(cacheKey, time, TimeSpan.FromDays(1));
+                        _redisClient.Set(cacheKey, time, TimeSpan.FromDays(1));
                     }
                 }
                 catch (Exception ex)

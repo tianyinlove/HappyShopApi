@@ -22,6 +22,7 @@ namespace HappyShop.Data
         /// <returns></returns>
         public static IServiceCollection AddHappyShopData(this IServiceCollection services)
         {
+            services.TryAddScoped<IMyRedisClient, MyRedisClient>();
             services.TryAddScoped<IHappyShopMongoContext, HappyShopMongoContext>();
             services.TryAddScoped<IMyFollowData, MyFollowData>();
             services.TryAddScoped<IUserInfoData, UserInfoData>();

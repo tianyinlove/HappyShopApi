@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HappyShop.Comm;
 using HappyShop.Data;
+using HappyShop.Repositories;
 using HappyShop.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +24,7 @@ namespace HappyShop.Api
     public class Startup
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
@@ -44,6 +45,7 @@ namespace HappyShop.Api
             //◊¢≤·±æµÿ≈‰÷√
             services.Configure<AppConfig>(Configuration);
             services.AddMemoryCache();
+            services.AddMemorySubscribe<IMyRedisClient>();
             services.AddHttpClient();
             services.AddHappyShopService();
             services.AddHappyShopData();

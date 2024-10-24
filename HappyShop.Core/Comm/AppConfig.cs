@@ -25,6 +25,11 @@ namespace HappyShop.Comm
         public string TradeUrl { get; set; }
 
         /// <summary>
+        ///
+        /// </summary>
+        public string RedisConnectionString { get; set; }
+
+        /// <summary>
         /// mongodb配置
         /// </summary>
         public MongodbConfig MongodbConfig { get; set; }
