@@ -84,8 +84,8 @@ namespace HappyShop.Service
                 var result = response.Detail.List;
                 result.ForEach(item =>
                 {
-                    item.TotalPlStr = (item.TotalPl / (double)10000).ToString("p2").Replace(",", "");
-                    item.EntrustPriceStr = (item.EntrustPrice / (double)10000).ToString("p2").Replace(",", "");
+                    item.TotalPlStr = (item.TotalPl / (decimal)10000).ToString("p2").Replace(",", "");
+                    item.EntrustPriceStr = (item.EntrustPrice / (decimal)10000.0).ToString("0.00");
                 });
                 return result;
             }
@@ -116,7 +116,7 @@ namespace HappyShop.Service
                 var result = response.Detail.Items;
                 result.ForEach(item =>
                 {
-                    item.SecuScaleStr = (item.SecuScale / (double)10000).ToString("p2").Replace(",", "");
+                    item.SecuScaleStr = (item.SecuScale / (decimal)10000).ToString("p2").Replace(",", "");
                 });
                 return result;
             }
