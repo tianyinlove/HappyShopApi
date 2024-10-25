@@ -93,7 +93,7 @@ namespace HappyShop.Service
                         {
                             foreach (var item in list)
                             {
-                                var message = $"{item.TradeTime}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPriceStr}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPriceStr}元({item.DealAmountStr}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
+                                var message = $"{item.TradeTime.ToString("yyyy-MM-dd HH:mm:ss")}\n{item.TradeTypeName}：{item.SecuName}({item.StockCode})\n委托价：{item.EntrustPriceStr}元({item.EntrustAmt}股)，撤单{item.CancleAmt}股\n成交价：{item.DealPriceStr}元({item.DealNumber}股)\n状态：{item.StatusMsg}\n成交仓位：{item.DealPosition};\n\n";
                                 var toUsers = userData.Where(x => (x.StockPool == poolName && string.IsNullOrEmpty(x.StockCode)) || (x.StockPool == poolName && x.StockCode == item.StockCode) || (string.IsNullOrEmpty(x.StockPool) && x.StockCode == item.StockCode))
                                     .Select(x => x.UserName)
                                     .Distinct()
