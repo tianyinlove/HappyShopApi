@@ -40,6 +40,11 @@ namespace HappyShop.Comm
         public WechatConfig WechatConfig { get; set; }
 
         /// <summary>
+        /// 企业微信配置
+        /// </summary>
+        public QYWechatConfig QYWechatConfig { get; set; }
+
+        /// <summary>
         /// 微信账号配置
         /// </summary>
         public List<WechatAccount> WechatAccount { get; set; }
@@ -144,6 +149,42 @@ namespace HappyShop.Comm
     }
 
     /// <summary>
+    /// 企业微信配置
+    /// </summary>
+    public class QYWechatConfig
+    {
+        /// <summary>
+        /// 微信App端连接获取code的Url
+        /// </summary>
+        public string WechatAppConnect { get; set; }
+
+        /// <summary>
+        /// 微信PC端连接获取code的Url
+        /// </summary>
+        public string WechatPCConnect { get; set; }
+
+        /// <summary>
+        /// 微信获取临时token用户Api地址
+        /// </summary>
+        public string WechatTokenUrl { get; set; }
+
+        /// <summary>
+        /// 微信获取用户信息Api地址
+        /// </summary>
+        public string WechatUserUrl { get; set; }
+
+        /// <summary>
+        /// code换取用户信息Api地址
+        /// </summary>
+        public string WechatTicketUrl { get; set; }
+
+        /// <summary>
+        /// 微信发送消息Api地址
+        /// </summary>
+        public string WechatSendUrl { get; set; }
+    }
+
+    /// <summary>
     /// 微信账号配置
     /// </summary>
     public class WechatAccount
@@ -162,6 +203,11 @@ namespace HappyShop.Comm
         /// 微信appid
         /// </summary>
         public string AppID { get; set; }
+
+        /// <summary>
+        /// 应用id
+        /// </summary>
+        public string AgentId { get; set; }
 
         /// <summary>
         /// 微信AppSecret

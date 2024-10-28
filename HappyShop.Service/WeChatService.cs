@@ -1,5 +1,7 @@
-﻿using HappyShop.Domian;
+﻿using HappyShop.Comm;
+using HappyShop.Domian;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,24 +20,20 @@ namespace HappyShop.Service
     /// </summary>
     internal class WeChatService : IWeChatService
     {
-        private IHttpClientFactory _httpClientFactory;
-        private IMemoryCache _memoryCache;
-        private string getTokenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken";
-        private string loginUrl = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session";
-        private string sendUrl = "https://qyapi.weixin.qq.com/cgi-bin/message/send";
-        private string userUrl = "https://qyapi.weixin.qq.com/cgi-bin/user/get";
-        private int _agentId = 1000002;
-        private string _corpId = "ww1c5ca8f9af6164f4";
-        private string _corpSecret = "0KpZS4ri3HuQOeiu0niga_peKXBp1--aTrviaTT8Z54";
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IOptionsMonitor<AppConfig> _options;
 
         /// <summary>
         ///
         /// </summary>
         public WeChatService(IMemoryCache memoryCache,
+            IOptionsMonitor<AppConfig> options,
             IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
+            this._options = options;
         }
 
         /// <summary>
@@ -48,7 +46,8 @@ namespace HappyShop.Service
             var result = _memoryCache.Get<string>(cacheKey);
             if (string.IsNullOrEmpty(result))
             {
-                var apiUrl = $"{getTokenUrl}?corpid={_corpId}&corpsecret={_corpSecret}";
+                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AcountId == 4);
+                var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatTokenUrl, account.AppID, account.AppSecret);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
                 var data = await response.Content.ReadAsStringAsync();
@@ -78,7 +77,7 @@ namespace HappyShop.Service
             if (result == null)
             {
                 var token = await GetToken();
-                var apiUrl = $"{loginUrl}?access_token={token}&js_code={code}&grant_type=authorization_code";
+                var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatTicketUrl, token, code);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
                 var data = await response.Content.ReadAsStringAsync();
@@ -109,7 +108,7 @@ namespace HappyShop.Service
             if (result == null)
             {
                 var token = await GetToken();
-                var apiUrl = $"{userUrl}?access_token={token}&userid={userId}";
+                var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatUserUrl, token, userId);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
                 var data = await response.Content.ReadAsStringAsync();
@@ -144,9 +143,10 @@ namespace HappyShop.Service
             }
             try
             {
+                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AcountId == 4);
                 var token = await GetToken();
-                var apiUrl = $"{sendUrl}?access_token={token}";
-                request.AgentId = _agentId;
+                var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatSendUrl, token);
+                request.AgentId = Convert.ToInt32(account.AgentId);
                 var jsonData = request.ToJson(NullValueHandling.Ignore);
                 var requestData = new HttpRequestMessage(HttpMethod.Post, apiUrl)
                 {
