@@ -174,6 +174,8 @@ namespace HappyShop.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginQYWeChat(string code)
         {
+            var query = _httpContext.HttpContext.Request.QueryString.Value;
+            Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"企业微信数据 {query}");
             if (string.IsNullOrEmpty(code))
             {
                 throw new ApiException(-1, "code不能为空");
