@@ -136,7 +136,7 @@ namespace HappyShop.Api.Controllers
         public void WeChat(int acountId = 2)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
-            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AccountId == acountId);
             //首次握手
             string redirectUrl = $"{wxConfig.RedirectUrl}{query}";
             _httpContext.HttpContext.Response.Redirect(_oauthService.GetWeChatCode(WebUtility.UrlEncode(redirectUrl), wxConfig, true), true);
@@ -155,7 +155,7 @@ namespace HappyShop.Api.Controllers
             {
                 throw new ApiException(-1, "code不能为空");
             }
-            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AccountId == acountId);
             var accessToken = await _oauthService.GetWeChatAccessTokenAsync(wxConfig, code);
             if (accessToken == null)
             {
@@ -173,12 +173,12 @@ namespace HappyShop.Api.Controllers
         /// <summary>
         /// 企业微信登录
         /// </summary>
-        /// <param name="acountId"></param>
+        /// <param name="accountId"></param>
         [HttpGet]
-        public void QYWeChat([FromQuery] int acountId = 4)
+        public void QYWeChat([FromQuery] int accountId = 4)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
-            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AccountId == accountId);
             //首次握手
             string redirectUrl = $"{wxConfig.RedirectUrl}{query}";
             _httpContext.HttpContext.Response.Redirect($"https://open.weixin.qq.com/connect/oauth2/authorize?appid={wxConfig.AppID}&redirect_uri={WebUtility.UrlEncode(redirectUrl)}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", true);
@@ -188,9 +188,10 @@ namespace HappyShop.Api.Controllers
         /// 企业微信登录授权
         /// </summary>
         /// <param name="code"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task LoginQYWeChat([FromQuery] string code)
+        public async Task LoginQYWeChat([FromQuery] string code, int accountId = 4)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"企业微信数据 {query}");
@@ -199,7 +200,7 @@ namespace HappyShop.Api.Controllers
                 throw new ApiException(-1, "code不能为空");
             }
 
-            var result = await _qyUserInfoService.LoginAsync(code);
+            var result = await _qyUserInfoService.LoginAsync(code, accountId);
             _httpContext.HttpContext.Response.Redirect(string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, result.Id), true);
         }
 

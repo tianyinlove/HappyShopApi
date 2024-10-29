@@ -44,11 +44,12 @@ namespace HappyShop.Service
         /// <param name="stockPool">股票池名</param>
         /// <param name="stockCode">股票代码</param>
         /// <param name="isFollow">是否关注</param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<bool> SaveUpdate(string userId, string stockPool, string stockCode, bool isFollow)
+        public async Task<bool> SaveUpdate(string userId, string stockPool, string stockCode, bool isFollow, int accountId)
         {
             //查询用户是否存在
-            var user = await _userInfoService.GetUserByUserIdAsync(userId);
+            var user = await _userInfoService.GetUserByUserIdAsync(userId, accountId);
             if (user == null)
             {
                 return false;

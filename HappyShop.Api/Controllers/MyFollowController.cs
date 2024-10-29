@@ -99,9 +99,9 @@ namespace HappyShop.Api.Controllers
         /// <param name="isFollow">是否关注</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Follw([FromQuery] string userId, string stockPool = "", string stockCode = "", bool isFollow = true)
+        public async Task<IActionResult> Follw([FromQuery] string userId, string stockPool = "", string stockCode = "", bool isFollow = true, int accountId = 4)
         {
-            var result = await _myFollowService.SaveUpdate(userId, stockPool, stockCode, isFollow);
+            var result = await _myFollowService.SaveUpdate(userId, stockPool, stockCode, isFollow, accountId);
             return new ApiResult<bool>(result);
         }
 
@@ -111,9 +111,9 @@ namespace HappyShop.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [HttpPost]
-        public async Task<IActionResult> SendMessage()
+        public async Task<IActionResult> SendMessage([FromQuery] int accountId = 4)
         {
-            await _stockMonitorService.SendMessageAsync();
+            await _stockMonitorService.SendMessageAsync(accountId);
             return new ApiResult<bool>(true);
         }
     }

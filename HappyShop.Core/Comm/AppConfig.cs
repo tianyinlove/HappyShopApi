@@ -192,7 +192,7 @@ namespace HappyShop.Comm
         /// <summary>
         /// 账号配置ID
         /// </summary>
-        public int AcountId { get; set; }
+        public int AccountId { get; set; }
 
         /// <summary>
         /// 微信账号类型(1:小程序;2:公众号;)

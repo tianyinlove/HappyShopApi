@@ -12,9 +12,6 @@ using Utility.Model;
 using Utility.Constants;
 using HappyShop.Entity;
 using HappyShop.Model;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using HappyShop.Domian;
-using System.Collections.Generic;
 
 namespace HappyShop.Service
 {
@@ -111,7 +108,7 @@ namespace HappyShop.Service
             var result = new UserInfoEntity();
             if (string.IsNullOrEmpty(request.PhoneNumber))
             {
-                var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == request.AcountId);
+                var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AccountId == request.AcountId);
                 //微信登录
                 var loginInfo = await _oathService.LoginAsync(request.Code, wxConfig);
                 result = await _userInfoData.GetUserByAccount(loginInfo.unionid ?? loginInfo.openid);
@@ -244,7 +241,7 @@ namespace HappyShop.Service
             {
                 throw new ApiException(-1, "参数异常");
             }
-            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
+            var wxConfig = _config.WechatAccount.FirstOrDefault(x => x.AccountId == acountId);
             var accessToken = await _oathService.GetWeChatAccessTokenAsync(wxConfig);
             if (accessToken == null || string.IsNullOrEmpty(accessToken.Access_Token))
             {

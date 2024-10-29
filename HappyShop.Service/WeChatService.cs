@@ -39,14 +39,15 @@ namespace HappyShop.Service
         /// <summary>
         /// 获取Token
         /// </summary>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        private async Task<string> GetToken()
+        private async Task<string> GetToken(int accountId)
         {
             string cacheKey = "HappyShop:WeChat:Token";
             var result = _memoryCache.Get<string>(cacheKey);
             if (string.IsNullOrEmpty(result))
             {
-                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AcountId == 4);
+                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AccountId == accountId);
                 var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatTokenUrl, account.AppID, account.AppSecret);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
@@ -69,14 +70,15 @@ namespace HappyShop.Service
         /// 企业微信登录
         /// </summary>
         /// <param name="code"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<QYWechatLoginUser> LoginAsync(string code)
+        public async Task<QYWechatLoginUser> LoginAsync(string code, int accountId)
         {
             string cacheKey = $"HappyShop:WeChat:Login:{code}";
             var result = _memoryCache.Get<QYWechatLoginUser>(cacheKey);
             if (result == null)
             {
-                var token = await GetToken();
+                var token = await GetToken(accountId);
                 var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatTicketUrl, token, code);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
@@ -99,15 +101,16 @@ namespace HappyShop.Service
         /// 获取用户信息
         /// </summary>
         /// <param name="userId">用户在企业内的UserID</param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<QYWechatUserInfo> GetUserInfoAsync(string userId)
+        public async Task<QYWechatUserInfo> GetUserInfoAsync(string userId, int accountId)
         {
             string cacheKey = $"HappyShop:WeChat:UserInfo:{userId}";
             var result = _memoryCache.Get<QYWechatUserInfo>(cacheKey);
             if (result == null)
             {
-                var token = await GetToken();
+                var token = await GetToken(accountId);
                 var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatUserUrl, token, userId);
                 var response = await _httpClientFactory.CreateClient().SendAsync(new HttpRequestMessage(HttpMethod.Get, apiUrl));
                 response.EnsureSuccessStatusCode();
@@ -130,8 +133,9 @@ namespace HappyShop.Service
         /// 消息通知
         /// </summary>
         /// <param name="request">通知对象</param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<bool> NoticeAsync(WechatMessageRequest request)
+        public async Task<bool> NoticeAsync(WechatMessageRequest request, int accountId)
         {
             if (string.IsNullOrEmpty(request.ToUser) && string.IsNullOrEmpty(request.ToTag) && string.IsNullOrEmpty(request.ToParty))
             {
@@ -143,8 +147,8 @@ namespace HappyShop.Service
             }
             try
             {
-                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AppID == "ww1c5ca8f9af6164f4");
-                var token = await GetToken();
+                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AccountId == accountId);
+                var token = await GetToken(accountId);
                 var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatSendUrl, token);
                 request.AgentId = Convert.ToInt32(account.AgentId);
                 var jsonData = request.ToJson(NullValueHandling.Ignore);

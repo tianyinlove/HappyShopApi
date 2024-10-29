@@ -31,8 +31,9 @@ namespace HappyShop.Service
         ///
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<QYUserInfo> GetUserByUserIdAsync(string userId)
+        public async Task<QYUserInfo> GetUserByUserIdAsync(string userId, int accountId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -41,7 +42,7 @@ namespace HappyShop.Service
             var result = await _userInfoData.GetUserByUserIdAsync(userId);
             if (result == null)
             {
-                var weChatUser = await _weChatService.GetUserInfoAsync(userId);
+                var weChatUser = await _weChatService.GetUserInfoAsync(userId, accountId);
                 if (weChatUser != null && weChatUser.UserId == userId)
                 {
                     result = new QYUserInfo
@@ -76,15 +77,16 @@ namespace HappyShop.Service
         /// 企业微信登录
         /// </summary>
         /// <param name="code"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        public async Task<QYUserInfo> LoginAsync(string code)
+        public async Task<QYUserInfo> LoginAsync(string code, int accountId)
         {
-            var user = await _weChatService.LoginAsync(code);
+            var user = await _weChatService.LoginAsync(code, accountId);
             if (user == null)
             {
                 return null;
             }
-            return await GetUserByUserIdAsync(user.UserId);
+            return await GetUserByUserIdAsync(user.UserId, accountId);
         }
     }
 }

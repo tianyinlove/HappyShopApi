@@ -22,15 +22,18 @@ namespace HappyShop.Api.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IUserInfoService _userInfoService;
+        private readonly IOptionsMonitor<AppConfig> _options;
         private readonly IMyFollowService _myFollowService;
 
         /// <summary>
         ///
         /// </summary>
         public HomeController(IUserInfoService userInfoService,
+            IOptionsMonitor<AppConfig> options,
             IMyFollowService myFollowService)
         {
             _userInfoService = userInfoService;
+            this._options = options;
             _myFollowService = myFollowService;
         }
 
@@ -48,6 +51,7 @@ namespace HappyShop.Api.Controllers
             string sToken = "wKB3j3POS33LqEy2vTEhiTzh";
             string sCorpID = "ww1c5ca8f9af6164f4";
             string sEncodingAESKey = "sV96P5yUsG64zuAPQqLDgayL4jdvx7HIDJrlMf8jIWf";
+            var account = _options.CurrentValue.WechatAccount.FirstOrDefault(a => a.AppID == sCorpID);
 
             var wxcpt = new Tencent.WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
 
@@ -91,11 +95,11 @@ namespace HappyShop.Api.Controllers
                                 var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true);
+                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true, account.AccountId);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true);
+                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true, account.AccountId);
                                 }
                                 message = saveResult ? "关注成功" : "关注失败";
                             }
@@ -104,11 +108,11 @@ namespace HappyShop.Api.Controllers
                                 var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false);
+                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false, account.AccountId);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false);
+                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false, account.AccountId);
                                 }
                                 message = saveResult ? "取消关注成功" : "取消关注失败";
                             }

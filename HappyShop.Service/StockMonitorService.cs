@@ -56,7 +56,7 @@ namespace HappyShop.Service
         ///
         /// </summary>
         /// <returns></returns>
-        public async Task SendMessageAsync()
+        public async Task SendMessageAsync(int accountId)
         {
             Logger.WriteLog(LogLevel.Info, "开始执行服务");
 
@@ -114,7 +114,7 @@ namespace HappyShop.Service
                                                 Text = new NoticeText { Content = $"{poolName}\n{message}" }
                                             };
 
-                                            await _weChatService.NoticeAsync(request);
+                                            await _weChatService.NoticeAsync(request, accountId);
                                         }
                                     }
                                 }

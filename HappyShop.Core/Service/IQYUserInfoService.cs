@@ -17,8 +17,9 @@ namespace HappyShop.Service
         ///
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<QYUserInfo> GetUserByUserIdAsync(string userId);
+        Task<QYUserInfo> GetUserByUserIdAsync(string userId, int accountId);
 
         /// <summary>
         ///
@@ -31,7 +32,8 @@ namespace HappyShop.Service
         /// 企业微信登录
         /// </summary>
         /// <param name="code"></param>
+        /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<QYUserInfo> LoginAsync(string code);
+        Task<QYUserInfo> LoginAsync(string code, int accountId);
     }
 }
