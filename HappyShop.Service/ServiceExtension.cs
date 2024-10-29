@@ -28,6 +28,8 @@ namespace HappyShop.Service
             services.TryAddScoped<IUserInfoService, UserInfoService>();
             services.TryAddScoped<IWeChatService, WeChatService>();
             services.TryAddScoped<IMyFollowService, MyFollowService>();
+            services.TryAddScoped<IQYUserInfoService, QYUserInfoService>();
+            services.TryAddScoped<IMigrateService, MigrateService>();
             return services;
         }
     }

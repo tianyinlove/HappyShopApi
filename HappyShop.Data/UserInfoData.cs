@@ -34,15 +34,6 @@ namespace HappyShop.Data
         /// <summary>
         ///
         /// </summary>
-        public void InitData()
-        {
-            Logger.WriteLog(LogLevel.Trace, "初始化索引");
-            _mongoContext.InitUserInfoIndexs();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
         public async Task<UserInfoEntity> GetUserByAccountAsync(string accountName)

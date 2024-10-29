@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HappyShop.Data;
+using HappyShop.Service;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,15 +18,15 @@ namespace HappyShop.Api
         ///
         /// </summary>
         /// <param name="args"></param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var hostBuilber = CreateHostBuilder(args);
             var host = hostBuilber.Build();
             //程序启动时执行初始化
             using (var scope = host.Services.CreateScope())
             {
-                var db = scope.ServiceProvider.GetService<IUserInfoData>();
-                db.InitData();
+                var db = scope.ServiceProvider.GetService<IMigrateService>();
+                await db.InitDataAsync();
             }
             host.Run();
         }

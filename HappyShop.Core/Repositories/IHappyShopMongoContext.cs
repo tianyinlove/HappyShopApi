@@ -21,6 +21,11 @@ namespace HappyShop.Repositories
         /// <summary>
         ///
         /// </summary>
+        IMongoCollection<QYUserInfoDocument> QYUserInfo { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
         IMongoCollection<MyFollowInfoDocument> MyFollowInfo { get; }
 
         /// <summary>
@@ -37,6 +42,11 @@ namespace HappyShop.Repositories
         /// <summary>
         ///
         /// </summary>
-        void InitUserInfoIndexs();
+        Task InitQYUserInfoIndexs();
+
+        /// <summary>
+        ///
+        /// </summary>
+        Task InitUserInfoIndexs();
     }
 }

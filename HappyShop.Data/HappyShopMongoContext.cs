@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace HappyShop.Data
 {
@@ -45,29 +46,53 @@ namespace HappyShop.Data
         /// <summary>
         ///
         /// </summary>
+        public IMongoCollection<QYUserInfoDocument> QYUserInfo => GetCollection<QYUserInfoDocument>("QYUserInfo");
+
+        /// <summary>
+        ///
+        /// </summary>
         public IMongoCollection<MyFollowInfoDocument> MyFollowInfo => GetCollection<MyFollowInfoDocument>("MyFollowInfo");
 
         /// <summary>
         ///
         /// </summary>
-        public void InitUserInfoIndexs()
+        public async Task InitQYUserInfoIndexs()
+        {
+            var collection = GetCollection<QYUserInfoDocument>();
+            var indexes = await collection.Indexes.List().ToListAsync();
+            if (!indexes.Any(d => d.GetElement("name").Value.AsString == "UserId"))
+            {
+                await collection.Indexes.CreateOneAsync(new CreateIndexModel<QYUserInfoDocument>(
+                     Builders<QYUserInfoDocument>.IndexKeys.Ascending(d => d.UserId),
+                     new CreateIndexOptions
+                     {
+                         Name = "UserId",
+                         Background = true
+                     }));
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public async Task InitUserInfoIndexs()
         {
             var collection = GetCollection<UserInfoDocument>();
-            var indexes = collection.Indexes.List().ToList();
+            var indexes = await collection.Indexes.List().ToListAsync();
             if (!indexes.Any(d => d.GetElement("name").Value.AsString == "PhoneNumber"))
             {
-                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
-                    Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.PhoneNumber),
-                    new CreateIndexOptions
-                    {
-                        Name = "PhoneNumber",
-                        Background = true
-                    }));
+                await collection.Indexes.CreateOneAsync(new CreateIndexModel<UserInfoDocument>(
+                     Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.PhoneNumber),
+                     new CreateIndexOptions
+                     {
+                         Name = "PhoneNumber",
+                         Background = true
+                     }));
             }
 
             if (!indexes.Any(d => d.GetElement("name").Value.AsString == "UnionId"))
             {
-                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
+                await collection.Indexes.CreateOneAsync(new CreateIndexModel<UserInfoDocument>(
                     Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.UnionId),
                     new CreateIndexOptions
                     {
@@ -78,7 +103,7 @@ namespace HappyShop.Data
 
             if (!indexes.Any(d => d.GetElement("name").Value.AsString == "OpenId"))
             {
-                collection.Indexes.CreateOne(new CreateIndexModel<UserInfoDocument>(
+                await collection.Indexes.CreateOneAsync(new CreateIndexModel<UserInfoDocument>(
                     Builders<UserInfoDocument>.IndexKeys.Ascending(d => d.OpenId),
                     new CreateIndexOptions
                     {

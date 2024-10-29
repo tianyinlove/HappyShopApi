@@ -16,6 +16,7 @@ using Utility.NetCore;
 using HappyShop.Domian;
 using Utility.NetLog;
 using System.IO;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HappyShop.Api.Controllers
 {
@@ -31,6 +32,7 @@ namespace HappyShop.Api.Controllers
         private readonly IOptionsMonitor<AppConfig> _options;
         private readonly IOAuthService _oauthService;
         private readonly IWeChatService _weChatService;
+        private readonly IQYUserInfoService _qyUserInfoService;
 
         /// <summary>
         ///
@@ -39,6 +41,7 @@ namespace HappyShop.Api.Controllers
             IOptionsMonitor<AppConfig> options,
             IOAuthService oauthService,
             IWeChatService weChatService,
+            IQYUserInfoService qyUserInfoService,
             IUserInfoService userInfoService)
         {
             _httpContext = httpContext;
@@ -46,6 +49,7 @@ namespace HappyShop.Api.Controllers
             _options = options;
             _oauthService = oauthService;
             this._weChatService = weChatService;
+            this._qyUserInfoService = qyUserInfoService;
         }
 
         /// <summary>
@@ -195,8 +199,27 @@ namespace HappyShop.Api.Controllers
                 throw new ApiException(-1, "code不能为空");
             }
 
-            var result = await _weChatService.LoginAsync(code);
-            _httpContext.HttpContext.Response.Redirect(string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, result.UserId), true);
+            var result = await _qyUserInfoService.LoginAsync(code);
+            _httpContext.HttpContext.Response.Redirect(string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, result.Id), true);
+        }
+
+        /// <summary>
+        /// 读取用户信息
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string token)
+        {
+            var query = _httpContext.HttpContext.Request.QueryString.Value;
+            Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"读取用户信息 {query}");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ApiException(-1, "token不能为空");
+            }
+
+            var result = await _qyUserInfoService.GetUserByIdAsync(token);
+            return new ApiResult<QYUserInfo>(result);
         }
 
         #endregion 企业微信

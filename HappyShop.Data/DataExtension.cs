@@ -26,6 +26,7 @@ namespace HappyShop.Data
             services.TryAddScoped<IHappyShopMongoContext, HappyShopMongoContext>();
             services.TryAddScoped<IMyFollowData, MyFollowData>();
             services.TryAddScoped<IUserInfoData, UserInfoData>();
+            services.TryAddScoped<IQYUserInfoData, QYUserInfoData>();
             return services;
         }
     }

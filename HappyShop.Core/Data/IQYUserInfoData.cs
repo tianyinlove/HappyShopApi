@@ -1,6 +1,9 @@
-﻿using HappyShop.Entity;
+﻿using HappyShop.Documents;
+using HappyShop.Entity;
+using HappyShop.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,34 +12,27 @@ namespace HappyShop.Data
     /// <summary>
     ///
     /// </summary>
-    public interface IUserInfoData
+    public interface IQYUserInfoData
     {
         /// <summary>
         ///
         /// </summary>
-        /// <param name="accountName"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task<UserInfoEntity> GetUserByAccountAsync(string accountName);
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="accountName"></param>
-        /// <returns></returns>
-        Task<UserInfoEntity> GetUserByAccount(string accountName);
+        Task<QYUserInfo> GetUserByUserIdAsync(string userId);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<UserInfoEntity> GetUserById(string id);
+        Task<QYUserInfo> GetUserByIdAsync(string id);
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task<UserInfoEntity> SaveUpdate(UserInfoEntity user);
+        Task<QYUserInfo> SaveUpdateAsync(QYUserInfo user);
     }
 }

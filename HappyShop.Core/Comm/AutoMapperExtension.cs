@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HappyShop.Documents;
 using HappyShop.Entity;
+using HappyShop.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,14 @@ using System.Text;
 namespace HappyShop.Comm
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class AutoMapperExtension
     {
         public static IMapper _mapper;
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         static AutoMapperExtension()
         {
@@ -25,10 +27,11 @@ namespace HappyShop.Comm
                 cfg.CreateMap<UserInfoDocument, UserInfoEntity>();
 
                 cfg.CreateMap<UserInfoEntity, Model.UserInfo>();
+
+                cfg.CreateMap<QYUserInfoDocument, QYUserInfo>();
             });
             _mapper = config.CreateMapper();
         }
-
 
         /// <summary>
         /// 数据转换

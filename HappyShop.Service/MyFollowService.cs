@@ -16,15 +16,15 @@ namespace HappyShop.Service
     {
         private readonly IMyFollowData _myFollowData;
         private readonly IApiClient _apiClient;
-        private readonly IWeChatService _weChatService;
+        private readonly IQYUserInfoService _userInfoService;
 
         public MyFollowService(IMyFollowData myFollowData,
             IApiClient apiClient,
-            IWeChatService weChatService)
+            IQYUserInfoService userInfoService)
         {
             _myFollowData = myFollowData;
             this._apiClient = apiClient;
-            this._weChatService = weChatService;
+            this._userInfoService = userInfoService;
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace HappyShop.Service
         public async Task<bool> SaveUpdate(string userId, string stockPool, string stockCode, bool isFollow)
         {
             //查询用户是否存在
-            var user = await _weChatService.GetUserInfoAsync(userId);
+            var user = await _userInfoService.GetUserByUserIdAsync(userId);
             if (user == null)
             {
                 return false;

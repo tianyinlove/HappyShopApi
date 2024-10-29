@@ -15,14 +15,14 @@ using Utility.NetLog;
 namespace HappyShop.Data
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    class UserInfoData : IUserInfoData
+    internal class UserInfoData : IUserInfoData
     {
         private HappyShopSQLContext _shopSQLContext;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public UserInfoData()
         {
@@ -30,16 +30,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public void InitData()
-        {
-            Logger.WriteLog(Utility.Constants.LogLevel.Trace, "初始化数据库");
-            _shopSQLContext.EnsureMigrate();
-        }
-
-        /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
@@ -56,7 +47,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
@@ -69,7 +60,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -80,7 +71,7 @@ namespace HappyShop.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
