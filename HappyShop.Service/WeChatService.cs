@@ -143,7 +143,7 @@ namespace HappyShop.Service
             }
             try
             {
-                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AcountId == 4);
+                var account = _options.CurrentValue.WechatAccount.FirstOrDefault(x => x.AppID == "ww1c5ca8f9af6164f4");
                 var token = await GetToken();
                 var apiUrl = string.Format(_options.CurrentValue.QYWechatConfig.WechatSendUrl, token);
                 request.AgentId = Convert.ToInt32(account.AgentId);

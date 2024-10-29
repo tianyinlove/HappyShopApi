@@ -175,7 +175,7 @@ namespace HappyShop.Api.Controllers
         /// </summary>
         /// <param name="acountId"></param>
         [HttpGet]
-        public void QYWeChat(int acountId = 4)
+        public void QYWeChat([FromQuery] int acountId = 4)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AcountId == acountId);
@@ -190,7 +190,7 @@ namespace HappyShop.Api.Controllers
         /// <param name="code"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task LoginQYWeChat(string code)
+        public async Task LoginQYWeChat([FromQuery] string code)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"企业微信数据 {query}");
@@ -209,7 +209,7 @@ namespace HappyShop.Api.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetUser(string token)
+        public async Task<IActionResult> GetUser([FromQuery] string token)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"读取用户信息 {query}");
