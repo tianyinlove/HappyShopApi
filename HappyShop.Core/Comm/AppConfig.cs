@@ -197,7 +197,7 @@ namespace HappyShop.Comm
         /// <summary>
         /// 微信账号类型(1:小程序;2:公众号;)
         /// </summary>
-        public int AcountType { get; set; }
+        public int AccountType { get; set; }
 
         /// <summary>
         /// 微信appid
