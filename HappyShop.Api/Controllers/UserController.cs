@@ -195,13 +195,35 @@ namespace HappyShop.Api.Controllers
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"企业微信数据 {query}");
-            if (string.IsNullOrEmpty(code))
+            if (query.Contains("?"))
             {
-                throw new ApiException(-1, "code不能为空");
+                query = query.Substring(query.IndexOf("?") + 1);
             }
+            var token = "";
+            try
+            {
+                if (string.IsNullOrEmpty(code))
+                {
+                    throw new ApiException(-1, "code不能为空");
+                }
 
-            var result = await _qyUserInfoService.LoginAsync(code, accountId);
-            _httpContext.HttpContext.Response.Redirect(string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, result.Id), true);
+                var result = await _qyUserInfoService.LoginAsync(code, accountId);
+                token = result?.Id;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(Utility.Constants.LogLevel.Error, "企业微信登录授权异常", new { code, accountId, query }, ex);
+            }
+            var url = string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, token);
+            if (url.Contains("?"))
+            {
+                url += "&" + query;
+            }
+            else
+            {
+                url += "?" + query;
+            }
+            _httpContext.HttpContext.Response.Redirect(url, true);
         }
 
         /// <summary>
