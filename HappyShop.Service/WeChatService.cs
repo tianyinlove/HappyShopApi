@@ -55,7 +55,7 @@ namespace HappyShop.Service
                 var data = await response.Content.ReadAsStringAsync();
                 if (!string.IsNullOrEmpty(data))
                 {
-                    Logger.WriteLog(LogLevel.Debug, "企业微信获取Token异常", new { apiUrl, data });
+                    Logger.WriteLog(LogLevel.Debug, "企业微信获取Token", new { apiUrl, data });
                     var responseData = data.FromJson<WechatMessageResponse>();
                     if (responseData.ErrCode != 0)
                     {
@@ -87,7 +87,7 @@ namespace HappyShop.Service
                 var data = await response.Content.ReadAsStringAsync();
                 if (!string.IsNullOrEmpty(data))
                 {
-                    Logger.WriteLog(LogLevel.Debug, "企业微信登录异常", new { apiUrl, data });
+                    Logger.WriteLog(LogLevel.Debug, "企业微信登录", new { apiUrl, data });
                     var responseData = data.FromJson<QYWechatLoginUser>();
                     if (responseData.ErrCode != 0)
                     {
@@ -120,7 +120,7 @@ namespace HappyShop.Service
                 var data = await response.Content.ReadAsStringAsync();
                 if (!string.IsNullOrEmpty(data))
                 {
-                    Logger.WriteLog(LogLevel.Debug, "企业微信获取用户信息异常", new { apiUrl, data });
+                    Logger.WriteLog(LogLevel.Debug, "企业微信获取用户信息", new { apiUrl, data });
                     var responseData = data.FromJson<QYWechatUserInfo>();
                     if (responseData.ErrCode != 0)
                     {
