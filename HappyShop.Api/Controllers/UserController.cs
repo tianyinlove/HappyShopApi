@@ -177,10 +177,9 @@ namespace HappyShop.Api.Controllers
         [HttpGet]
         public void QYWeChat([FromQuery] int accountId = 4)
         {
-            var query = _httpContext.HttpContext.Request.QueryString.Value;
             var wxConfig = Appconfig.WechatAccount.FirstOrDefault(x => x.AccountId == accountId);
             //首次握手
-            string redirectUrl = $"{wxConfig.RedirectUrl}{query}";
+            string redirectUrl = wxConfig.RedirectUrl.Append("accountId", accountId + "");
             _httpContext.HttpContext.Response.Redirect($"https://open.weixin.qq.com/connect/oauth2/authorize?appid={wxConfig.AppID}&redirect_uri={WebUtility.UrlEncode(redirectUrl)}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", true);
         }
 
@@ -191,14 +190,10 @@ namespace HappyShop.Api.Controllers
         /// <param name="accountId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task LoginQYWeChat([FromQuery] string code, int accountId = 4)
+        public async Task LoginQYWeChat([FromQuery] string code, int accountId)
         {
             var query = _httpContext.HttpContext.Request.QueryString.Value;
             Logger.WriteLog(Utility.Constants.LogLevel.Debug, $"企业微信数据 {query}");
-            if (query.Contains("?"))
-            {
-                query = query.Substring(query.IndexOf("?") + 1);
-            }
             var token = "";
             try
             {
@@ -215,14 +210,7 @@ namespace HappyShop.Api.Controllers
                 Logger.WriteLog(Utility.Constants.LogLevel.Error, "企业微信登录授权异常", new { code, accountId, query }, ex);
             }
             var url = string.Format(_options.CurrentValue.QYWechatConfig.WechatAppConnect, token);
-            if (url.Contains("?"))
-            {
-                url += "&" + query;
-            }
-            else
-            {
-                url += "?" + query;
-            }
+            url = url.Append("accountId", accountId + "");
             _httpContext.HttpContext.Response.Redirect(url, true);
         }
 

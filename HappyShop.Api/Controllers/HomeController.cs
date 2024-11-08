@@ -43,17 +43,13 @@ namespace HappyShop.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [HttpPost]
-        public async Task<string> ReceiveMessage(string msg_signature, string timestamp, string nonce, string echostr)
+        public async Task<string> ReceiveMessage(string msg_signature, string timestamp, string nonce, string echostr, int accountId)
         {
-            Logger.WriteLog(Utility.Constants.LogLevel.Debug, "微信传入参数", new { msg_signature, timestamp, nonce, echostr });
+            Logger.WriteLog(Utility.Constants.LogLevel.Debug, "微信传入参数", new { msg_signature, timestamp, nonce, echostr, accountId });
 
-            //企业微信后台开发者设置的token, corpID, EncodingAESKey
-            string sToken = "wKB3j3POS33LqEy2vTEhiTzh";
-            string sCorpID = "ww1c5ca8f9af6164f4";
-            string sEncodingAESKey = "sV96P5yUsG64zuAPQqLDgayL4jdvx7HIDJrlMf8jIWf";
-            var account = _options.CurrentValue.WechatAccount.FirstOrDefault(a => a.AppID == sCorpID);
+            var account = _options.CurrentValue.WechatAccount.FirstOrDefault(a => a.AccountId == accountId);
 
-            var wxcpt = new Tencent.WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
+            var wxcpt = new Tencent.WXBizMsgCrypt(account.Token, account.EncodingAESKey, account.AppID);
 
             int ret = 0;
             string result = "";
@@ -122,7 +118,7 @@ namespace HappyShop.Api.Controllers
                             message = await _userInfoService.GetStockTradeByNameAsync(content);
                         }
                     }
-                    string sRespData = $"<xml><ToUserName><![CDATA[{gatewayData.GetValue<string>("FromUserName")}]]></ToUserName><FromUserName><![CDATA[{sCorpID}]]></FromUserName><CreateTime>{gatewayData.GetValue<string>("CreateTime")}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[{message}]]></Content><MsgId>{gatewayData.GetValue<string>("MsgId")}</MsgId><AgentID>{gatewayData.GetValue<string>("AgentID")}</AgentID></xml>";
+                    string sRespData = $"<xml><ToUserName><![CDATA[{gatewayData.GetValue<string>("FromUserName")}]]></ToUserName><FromUserName><![CDATA[{account.AppID}]]></FromUserName><CreateTime>{gatewayData.GetValue<string>("CreateTime")}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[{message}]]></Content><MsgId>{gatewayData.GetValue<string>("MsgId")}</MsgId><AgentID>{gatewayData.GetValue<string>("AgentID")}</AgentID></xml>";
                     ret = wxcpt.EncryptMsg(sRespData, timestamp, nonce, ref result);
                     if (ret != 0)
                     {

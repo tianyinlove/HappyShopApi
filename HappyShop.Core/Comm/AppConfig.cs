@@ -215,6 +215,16 @@ namespace HappyShop.Comm
         public string AppSecret { get; set; }
 
         /// <summary>
+        /// 微信应用Token
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
+        /// 微信应用EncodingAESKey
+        /// </summary>
+        public string EncodingAESKey { get; set; }
+
+        /// <summary>
         /// 用户授权回调
         /// </summary>
         public string RedirectUrl { get; set; }
