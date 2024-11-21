@@ -43,7 +43,7 @@ namespace HappyShop.Service
                 {
                     return new List<MyFollowInfoDocument>();
                 }
-                userId = user.Id;
+                userId = user.UserId;
             }
             return await _myFollowData.GetMyFollows(userId);
         }
@@ -62,9 +62,10 @@ namespace HappyShop.Service
         {
             QYUserInfo user;
             //查询用户是否存在
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token) && string.IsNullOrEmpty(userId))
             {
                 user = await _userInfoService.GetUserByIdAsync(token);
+                userId = user?.UserId;
             }
             else
             {
