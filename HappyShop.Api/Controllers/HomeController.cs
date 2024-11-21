@@ -91,11 +91,11 @@ namespace HappyShop.Api.Controllers
                                 var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true, account.AccountId);
+                                    saveResult = await _myFollowService.SaveUpdate("", gatewayData.GetValue<string>("FromUserName"), contentList[1], "", true, account.AccountId);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true, account.AccountId);
+                                    saveResult = await _myFollowService.SaveUpdate("", gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], true, account.AccountId);
                                 }
                                 message = saveResult ? "关注成功" : "关注失败";
                             }
@@ -104,11 +104,11 @@ namespace HappyShop.Api.Controllers
                                 var saveResult = false;
                                 if (contentList.Length == 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false, account.AccountId);
+                                    saveResult = await _myFollowService.SaveUpdate("", gatewayData.GetValue<string>("FromUserName"), contentList[1], "", false, account.AccountId);
                                 }
                                 if (contentList.Length > 2)
                                 {
-                                    saveResult = await _myFollowService.SaveUpdate(gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false, account.AccountId);
+                                    saveResult = await _myFollowService.SaveUpdate("", gatewayData.GetValue<string>("FromUserName"), contentList[1], contentList[2], false, account.AccountId);
                                 }
                                 message = saveResult ? "取消关注成功" : "取消关注失败";
                             }

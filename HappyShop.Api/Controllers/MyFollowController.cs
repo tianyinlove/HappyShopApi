@@ -81,27 +81,29 @@ namespace HappyShop.Api.Controllers
         /// <summary>
         ///
         /// </summary>
+        /// <param name="token"></param>
         /// <param name="userId">用户在企业内的UserID</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetMyFollows([FromQuery] string userId)
+        public async Task<IActionResult> GetMyFollows([FromQuery] string token = "", string userId = "")
         {
-            var result = await _myFollowService.GetMyFollows(userId);
+            var result = await _myFollowService.GetMyFollows(token, userId);
             return new ApiResult<List<MyFollowInfoDocument>>(result);
         }
 
         /// <summary>
         ///
         /// </summary>
+        /// <param name="token"></param>
         /// <param name="userId">用户在企业内的UserID</param>
         /// <param name="stockPool">股票池名</param>
         /// <param name="stockCode">股票代码</param>
         /// <param name="isFollow">是否关注</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Follw([FromQuery] string userId, string stockPool = "", string stockCode = "", bool isFollow = true, int accountId = 4)
+        public async Task<IActionResult> Follw([FromQuery] string token = "", string userId = "", string stockPool = "", string stockCode = "", bool isFollow = true, int accountId = 4)
         {
-            var result = await _myFollowService.SaveUpdate(userId, stockPool, stockCode, isFollow, accountId);
+            var result = await _myFollowService.SaveUpdate(token, userId, stockPool, stockCode, isFollow, accountId);
             return new ApiResult<bool>(result);
         }
 
